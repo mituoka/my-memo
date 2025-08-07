@@ -2,42 +2,74 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { ThemeProvider, useTheme } from "../context/ThemeContext";
-import SettingsSidebar from "../components/SettingsSidebar";
 import ErrorBoundary from "../components/ErrorBoundary";
-import ThemeScript from "../components/ThemeScript";
 
 function ClientLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
-        <SimpleHeader />
-        <main className="container mx-auto px-4 py-8">
-          {children}
+      <div className="layout">
+        <Header />
+        <main className="main">
+          <div className="container">
+            {children}
+          </div>
         </main>
-        <SimpleFooter />
+        <Footer />
       </div>
     </ErrorBoundary>
   );
 }
 
-function SimpleHeader() {
+function Header() {
   return (
-    <header className="bg-white shadow-sm border-b">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    <header className="header">
+      <div className="container">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              background: 'var(--primary)',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <svg 
+                width="18" 
+                height="18" 
+                fill="none" 
+                stroke="white" 
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-gray-900">FlexNote</span>
+            <span style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: 'var(--text-primary)'
+            }}>
+              FlexNote
+            </span>
           </Link>
-          <Link 
-            href="/memo/new"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
+
+          {/* Navigation */}
+          <Link href="/memo/new" className="btn btn-primary">
+            <svg 
+              width="16" 
+              height="16" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              style={{ marginRight: '0.5rem' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
             新規メモ
           </Link>
         </div>
@@ -46,18 +78,17 @@ function SimpleHeader() {
   );
 }
 
-function SimpleFooter() {
-  const [todayString, setTodayString] = useState('');
-  
+function Footer() {
+  const [currentYear, setCurrentYear] = useState('');
+
   useEffect(() => {
-    const today = new Date();
-    setTodayString(`${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`);
+    setCurrentYear(new Date().getFullYear().toString());
   }, []);
 
   return (
-    <footer className="bg-white border-t mt-auto">
-      <div className="container mx-auto px-4 py-4 text-center text-sm text-gray-600">
-        &copy; {todayString} FlexNote - フレックスノート
+    <footer className="footer">
+      <div className="container">
+        <p>&copy; {currentYear} FlexNote - シンプルメモアプリ</p>
       </div>
     </footer>
   );
