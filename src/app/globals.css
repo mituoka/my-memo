@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light mode (default) - always applied unless overridden by class */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* カスタムテーマ用の初期値 */
+  --custom-primary: #8b5cf6;
+  --custom-secondary: #a78bfa;
+  --custom-accent: #10b981;
+  /* Theme state to prevent hydration mismatches */
+  --theme-initialized: 0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+/* Dark mode - only applied when .dark class is present */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --background-rgb: 10, 10, 10;
+  --content-opacity: 0.9;
+}
+
+/* Force light mode styles - override any browser preferences */
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  --background-rgb: 255, 255, 255;
+  --content-opacity: 0.95;
+}
+
+/* カスタムテーマ: 動的カラースキーム */
+.custom {
+  --background: #1a1b2e;
+  --foreground: #e8e8f0;
+}
+
+/* Dark mode specific overrides */
+.dark .bg-white { background-color: #1f2937 !important; }
+.dark .bg-gray-50 { background-color: #111827 !important; }
+.dark .bg-gray-100 { background-color: #1f2937 !important; }
+.dark .bg-gray-800 { background-color: #374151 !important; }
+.dark .bg-gray-900 { background-color: #111827 !important; }
+
+.dark .text-gray-900 { color: #f9fafb !important; }
+.dark .text-gray-800 { color: #f3f4f6 !important; }
+.dark .text-gray-700 { color: #e5e7eb !important; }
+.dark .text-gray-600 { color: #d1d5db !important; }
+.dark .text-gray-500 { color: #9ca3af !important; }
+.dark .text-gray-400 { color: #6b7280 !important; }
+.dark .text-white { color: #ffffff !important; }
+
+.dark .border-gray-200 { border-color: #374151 !important; }
+.dark .border-gray-300 { border-color: #4b5563 !important; }
+.dark .border-gray-700 { border-color: #6b7280 !important; }
+
+.dark .hover\:bg-gray-100:hover { background-color: #374151 !important; }
+.dark .hover\:bg-gray-50:hover { background-color: #1f2937 !important; }
+.dark .hover\:border-gray-300:hover { border-color: #4b5563 !important; }
+.dark .hover\:border-gray-600:hover { border-color: #9ca3af !important; }
+
+/* Light mode explicit overrides to prevent browser interference */
+.light .bg-white { background-color: #ffffff !important; }
+.light .bg-gray-50 { background-color: #f9fafb !important; }
+.light .bg-gray-100 { background-color: #f3f4f6 !important; }
+.light .bg-gray-800 { background-color: #1f2937 !important; }
+.light .bg-gray-900 { background-color: #111827 !important; }
+
+.light .text-gray-900 { color: #111827 !important; }
+.light .text-gray-800 { color: #1f2937 !important; }
+.light .text-gray-700 { color: #374151 !important; }
+.light .text-gray-600 { color: #4b5563 !important; }
+.light .text-gray-500 { color: #6b7280 !important; }
+.light .text-gray-400 { color: #9ca3af !important; }
+.light .text-white { color: #ffffff !important; }
+
+.light .border-gray-200 { border-color: #e5e7eb !important; }
+.light .border-gray-300 { border-color: #d1d5db !important; }
+.light .border-gray-700 { border-color: #374151 !important; }
+
+.light .hover\:bg-gray-100:hover { background-color: #f3f4f6 !important; }
+.light .hover\:bg-gray-50:hover { background-color: #f9fafb !important; }
+.light .hover\:border-gray-300:hover { border-color: #d1d5db !important; }
+.light .hover\:border-gray-600:hover { border-color: #4b5563 !important; }
+
+.custom .bg-white { background-color: #16213e !important; }
+.custom .bg-gray-50 { background-color: #0f1419 !important; }
+.custom .bg-gray-100 { background-color: #1a1b2e !important; }
+.custom .bg-gray-800 { background-color: #16213e !important; }
+.custom .bg-gray-900 { background-color: #0f1419 !important; }
+
+.custom .text-gray-900 { color: #e8e8f0 !important; }
+.custom .text-gray-600 { color: #b4b4c8 !important; }
+.custom .text-gray-500 { color: #9999b3 !important; }
+.custom .text-gray-400 { color: #7f7f99 !important; }
+.custom .text-white { color: #f0f0f7 !important; }
+
+/* 動的にカラーを変更可能な要素 */
+.custom .text-blue-600 { color: var(--custom-primary) !important; }
+.custom .text-blue-500 { color: var(--custom-secondary) !important; }
+.custom .text-blue-400 { color: var(--custom-secondary) !important; }
+
+.custom .text-purple-400 { color: var(--custom-secondary) !important; }
+.custom .text-purple-500 { color: var(--custom-secondary) !important; }
+
+.custom .border-gray-200 { border-color: #2d3748 !important; }
+.custom .border-gray-700 { border-color: #4a5568 !important; }
+.custom .border-purple-500 { border-color: var(--custom-secondary) !important; }
+
+.custom .bg-blue-600 { background-color: var(--custom-primary) !important; }
+.custom .bg-blue-500 { background-color: var(--custom-secondary) !important; }
+.custom .bg-blue-50 { background-color: color-mix(in srgb, var(--custom-primary) 20%, transparent) !important; }
+.custom .bg-blue-900\/20 { background-color: color-mix(in srgb, var(--custom-primary) 20%, transparent) !important; }
+.custom .bg-purple-900\/20 { background-color: color-mix(in srgb, var(--custom-primary) 20%, transparent) !important; }
+
+.custom .hover\:bg-gray-100:hover { background-color: #2d3748 !important; }
+.custom .hover\:bg-gray-700:hover { background-color: #4a5568 !important; }
+.custom .hover\:bg-gray-50:hover { background-color: #2d3748 !important; }
+
+.custom .hover\:border-gray-300:hover { border-color: #4a5568 !important; }
+.custom .hover\:border-gray-600:hover { border-color: #6b7280 !important; }
+
+.custom .hover\:text-blue-500:hover { color: var(--custom-secondary) !important; }
+.custom .hover\:text-blue-400:hover { color: var(--custom-secondary) !important; }
+.custom .hover\:text-purple-400:hover { color: var(--custom-secondary) !important; }
+
+.custom .shadow-sm { box-shadow: 0 1px 2px 0 color-mix(in srgb, var(--custom-primary) 5%, transparent) !important; }
+.custom .shadow-xl { box-shadow: 0 20px 25px -5px color-mix(in srgb, var(--custom-primary) 10%, transparent), 0 10px 10px -5px color-mix(in srgb, var(--custom-primary) 4%, transparent) !important; }
+
+/* アクセントカラーの使用 */
+.custom .bg-green-500 { background-color: var(--custom-accent) !important; }
+.custom .text-green-500 { color: var(--custom-accent) !important; }
+
+/* ホバーエフェクト用のスケールアニメーション */
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* スムーズなトランジション */
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}
+
+/* アプリの背景画像 */
+.app-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: var(--bg-image, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--bg-opacity, 1);
+  filter: blur(var(--bg-blur, 0px));
+}
+
+/* メインコンテンツ */
+.main-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* 画像サイズの制御 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* SVGアイコンのサイズ制御 */
+svg {
+  flex-shrink: 0;
+}
+
+/* ヘッダー背景アニメーション */
+@keyframes pulse {
+  0% {
+    opacity: 0.05;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.08;
+    transform: scale(1.02);
+  }
+}
