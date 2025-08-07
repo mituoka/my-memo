@@ -4,17 +4,12 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
-# GitHub Pages用の権限設定
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 同時実行を制限（1つのデプロイメントのみ実行）
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -37,9 +32,9 @@ jobs:
         run: npm ci
         
       - name: Build application
-        run: npm run build:static
+        run: npm run build
         env:
-          NODE_ENV: production
+          CI: false
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -47,10 +42,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './out'
+          path: './build'
 
   deploy:
-    # プルリクエストの場合はデプロイをスキップ
     if: github.event_name == 'push'
     environment:
       name: github-pages

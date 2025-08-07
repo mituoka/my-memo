@@ -1,16 +1,38 @@
-'use client';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMemoStorage, Memo } from '../hooks/useMemoStorage';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMemoStorage } from '@/hooks/useMemoStorage';
-
-export default function NewMemo() {
-  const router = useRouter();
-  const { addMemo } = useMemoStorage();
+function EditMemo() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const { getMemo, updateMemo } = useMemoStorage();
+  const [memo, setMemo] = useState<Memo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!id) {
+      alert('メモIDが指定されていません');
+      navigate('/');
+      return;
+    }
+
+    const memoData = getMemo(id);
+    if (memoData) {
+      setMemo(memoData);
+      setTitle(memoData.title);
+      setContent(memoData.content);
+      setTags(memoData.tags.join(', '));
+    } else {
+      alert('メモが見つかりませんでした');
+      navigate('/');
+      return;
+    }
+    setIsLoading(false);
+  }, [id, getMemo, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +42,8 @@ export default function NewMemo() {
       return;
     }
 
+    if (!memo) return;
+
     setIsSubmitting(true);
 
     try {
@@ -28,20 +52,41 @@ export default function NewMemo() {
         .map(tag => tag.trim())
         .filter(tag => tag !== '');
 
-      addMemo({
+      updateMemo(memo.id, {
         title: title.trim(),
         content: content.trim(),
         tags: tagList
       });
 
-      router.push('/');
+      navigate('/');
     } catch (error) {
-      console.error('メモの作成に失敗しました:', error);
-      alert('メモの作成に失敗しました');
+      console.error('メモの更新に失敗しました:', error);
+      alert('メモの更新に失敗しました');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '200px' 
+      }}>
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (!memo) {
+    return (
+      <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
+        <p className="text-secondary">メモが見つかりませんでした</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -53,10 +98,10 @@ export default function NewMemo() {
           margin: '0 0 0.5rem 0',
           color: 'var(--text-primary)'
         }}>
-          新規メモ作成
+          メモを編集
         </h1>
         <p className="text-secondary" style={{ margin: 0 }}>
-          タイトルと内容を入力してメモを作成してください
+          メモの内容を変更して更新してください
         </p>
       </div>
 
@@ -143,6 +188,24 @@ export default function NewMemo() {
             </p>
           </div>
 
+          {/* Meta Info */}
+          <div style={{ 
+            marginBottom: '2rem',
+            padding: '1rem',
+            background: 'var(--background)',
+            borderRadius: '4px',
+            fontSize: '0.8125rem'
+          }}>
+            <p className="text-muted" style={{ margin: '0 0 0.25rem 0' }}>
+              作成日時: {new Date(memo.createdAt).toLocaleString('ja-JP')}
+            </p>
+            {memo.updatedAt !== memo.createdAt && (
+              <p className="text-muted" style={{ margin: 0 }}>
+                最終更新: {new Date(memo.updatedAt).toLocaleString('ja-JP')}
+              </p>
+            )}
+          </div>
+
           {/* Actions */}
           <div style={{ 
             display: 'flex', 
@@ -152,7 +215,7 @@ export default function NewMemo() {
           }}>
             <button
               type="button"
-              onClick={() => router.push('/')}
+              onClick={() => navigate('/')}
               className="btn btn-secondary"
               disabled={isSubmitting}
             >
@@ -170,7 +233,7 @@ export default function NewMemo() {
               }}
             >
               {isSubmitting && <div className="spinner" style={{ width: '16px', height: '16px' }}></div>}
-              {isSubmitting ? '作成中...' : 'メモを作成'}
+              {isSubmitting ? '更新中...' : 'メモを更新'}
             </button>
           </div>
         </div>
@@ -178,3 +241,5 @@ export default function NewMemo() {
     </div>
   );
 }
+
+export default EditMemo;

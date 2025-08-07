@@ -1,10 +1,8 @@
-'use client';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useMemoStorage } from '../hooks/useMemoStorage';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useMemoStorage } from '@/hooks/useMemoStorage';
-
-export default function Home() {
+function Home() {
   const { memos, isLoaded, deleteMemo } = useMemoStorage();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -16,7 +14,7 @@ export default function Home() {
   );
 
   const handleDelete = (id: string, title: string) => {
-    if (confirm(`「${title}」を削除しますか？`)) {
+    if (window.confirm(`「${title}」を削除しますか？`)) {
       deleteMemo(id);
     }
   };
@@ -71,7 +69,7 @@ export default function Home() {
           </div>
           
           {memos.length === 0 && (
-            <Link href="/memo/new" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.75rem 1.5rem' }}>
+            <Link to="/memo/new" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.75rem 1.5rem' }}>
               <svg 
                 width="16" 
                 height="16" 
@@ -168,7 +166,7 @@ export default function Home() {
             思考、アイデア、タスクを整理して管理できます
           </p>
           
-          <Link href="/memo/new" className="btn btn-primary">
+          <Link to="/memo/new" className="btn btn-primary">
             最初のメモを作成
           </Link>
         </div>
@@ -239,7 +237,7 @@ export default function Home() {
                 
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <Link
-                    href={`/memo/edit?id=${memo.id}`}
+                    to={`/memo/edit/${memo.id}`}
                     className="btn btn-secondary btn-sm"
                   >
                     編集
@@ -259,6 +257,41 @@ export default function Home() {
             </div>
           ))}
         </div>
+      )}
+      
+      {/* FAB for adding new memo when memos exist */}
+      {memos.length > 0 && (
+        <Link 
+          to="/memo/new" 
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            width: '56px',
+            height: '56px',
+            backgroundColor: 'var(--primary)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'var(--shadow-lg)',
+            color: 'white',
+            textDecoration: 'none',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.backgroundColor = 'var(--primary-hover)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.backgroundColor = 'var(--primary)';
+          }}
+        >
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </Link>
       )}
       
       {/* Stats */}
@@ -284,3 +317,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

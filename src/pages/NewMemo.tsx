@@ -1,42 +1,14 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMemoStorage } from '../hooks/useMemoStorage';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemoStorage, Memo } from '@/hooks/useMemoStorage';
-
-function EditMemoContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { getMemo, updateMemo } = useMemoStorage();
-  const [memo, setMemo] = useState<Memo | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+function NewMemo() {
+  const navigate = useNavigate();
+  const { addMemo } = useMemoStorage();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-
-  useEffect(() => {
-    const id = searchParams.get('id');
-    
-    if (!id) {
-      alert('メモIDが指定されていません');
-      router.push('/');
-      return;
-    }
-
-    const memoData = getMemo(id);
-    if (memoData) {
-      setMemo(memoData);
-      setTitle(memoData.title);
-      setContent(memoData.content);
-      setTags(memoData.tags.join(', '));
-    } else {
-      alert('メモが見つかりませんでした');
-      router.push('/');
-      return;
-    }
-    setIsLoading(false);
-  }, [searchParams, getMemo, router]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +18,6 @@ function EditMemoContent() {
       return;
     }
 
-    if (!memo) return;
-
     setIsSubmitting(true);
 
     try {
@@ -56,41 +26,20 @@ function EditMemoContent() {
         .map(tag => tag.trim())
         .filter(tag => tag !== '');
 
-      updateMemo(memo.id, {
+      addMemo({
         title: title.trim(),
         content: content.trim(),
         tags: tagList
       });
 
-      router.push('/');
+      navigate('/');
     } catch (error) {
-      console.error('メモの更新に失敗しました:', error);
-      alert('メモの更新に失敗しました');
+      console.error('メモの作成に失敗しました:', error);
+      alert('メモの作成に失敗しました');
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '200px' 
-      }}>
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (!memo) {
-    return (
-      <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
-        <p className="text-secondary">メモが見つかりませんでした</p>
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -102,10 +51,10 @@ function EditMemoContent() {
           margin: '0 0 0.5rem 0',
           color: 'var(--text-primary)'
         }}>
-          メモを編集
+          新規メモ作成
         </h1>
         <p className="text-secondary" style={{ margin: 0 }}>
-          メモの内容を変更して更新してください
+          タイトルと内容を入力してメモを作成してください
         </p>
       </div>
 
@@ -192,24 +141,6 @@ function EditMemoContent() {
             </p>
           </div>
 
-          {/* Meta Info */}
-          <div style={{ 
-            marginBottom: '2rem',
-            padding: '1rem',
-            background: 'var(--background)',
-            borderRadius: '4px',
-            fontSize: '0.8125rem'
-          }}>
-            <p className="text-muted" style={{ margin: '0 0 0.25rem 0' }}>
-              作成日時: {new Date(memo.createdAt).toLocaleString('ja-JP')}
-            </p>
-            {memo.updatedAt !== memo.createdAt && (
-              <p className="text-muted" style={{ margin: 0 }}>
-                最終更新: {new Date(memo.updatedAt).toLocaleString('ja-JP')}
-              </p>
-            )}
-          </div>
-
           {/* Actions */}
           <div style={{ 
             display: 'flex', 
@@ -219,7 +150,7 @@ function EditMemoContent() {
           }}>
             <button
               type="button"
-              onClick={() => router.push('/')}
+              onClick={() => navigate('/')}
               className="btn btn-secondary"
               disabled={isSubmitting}
             >
@@ -237,7 +168,7 @@ function EditMemoContent() {
               }}
             >
               {isSubmitting && <div className="spinner" style={{ width: '16px', height: '16px' }}></div>}
-              {isSubmitting ? '更新中...' : 'メモを更新'}
+              {isSubmitting ? '作成中...' : 'メモを作成'}
             </button>
           </div>
         </div>
@@ -246,19 +177,4 @@ function EditMemoContent() {
   );
 }
 
-export default function EditMemo() {
-  return (
-    <Suspense fallback={
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '200px' 
-      }}>
-        <div className="spinner"></div>
-      </div>
-    }>
-      <EditMemoContent />
-    </Suspense>
-  );
-}
+export default NewMemo;
