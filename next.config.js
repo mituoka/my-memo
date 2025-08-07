@@ -1,11 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 開発環境のみの設定
+  ...(process.env.NODE_ENV !== 'production' && {
+    // 開発時は通常のNext.js設定
+  }),
+  // 本番環境（GitHub Pages）用の設定
+  ...(process.env.NODE_ENV === 'production' && {
+    output: 'export',
+    distDir: 'out',
+    trailingSlash: true,
+    basePath: '/my-memo',
+    images: {
+      unoptimized: true
+    },
+  }),
   typescript: {
-    // 開発環境でのみ型チェックを無効化
     ignoreBuildErrors: process.env.NODE_ENV !== 'production'
   },
   eslint: {
-    // 開発環境でのみESLintチェックを無効化
     ignoreDuringBuilds: process.env.NODE_ENV !== 'production'
   }
 };

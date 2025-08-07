@@ -239,7 +239,7 @@ export default function Home() {
                 
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <Link
-                    href={`/memo/edit/${memo.id}`}
+                    href={`/memo/edit?id=${memo.id}`}
                     className="btn btn-secondary btn-sm"
                   >
                     編集

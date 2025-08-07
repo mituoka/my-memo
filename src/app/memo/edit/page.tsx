@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemoStorage, Memo } from '@/hooks/useMemoStorage';
 
-export default function EditMemo({ params }: { params: { id: string } }) {
+function EditMemoContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { getMemo, updateMemo } = useMemoStorage();
   const [memo, setMemo] = useState<Memo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,23 +16,27 @@ export default function EditMemo({ params }: { params: { id: string } }) {
   const [tags, setTags] = useState('');
 
   useEffect(() => {
-    const fetchMemo = () => {
-      const memoData = getMemo(params.id);
-      if (memoData) {
-        setMemo(memoData);
-        setTitle(memoData.title);
-        setContent(memoData.content);
-        setTags(memoData.tags.join(', '));
-      } else {
-        alert('メモが見つかりませんでした');
-        router.push('/');
-        return;
-      }
-      setIsLoading(false);
-    };
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      alert('メモIDが指定されていません');
+      router.push('/');
+      return;
+    }
 
-    fetchMemo();
-  }, [params.id, getMemo, router]);
+    const memoData = getMemo(id);
+    if (memoData) {
+      setMemo(memoData);
+      setTitle(memoData.title);
+      setContent(memoData.content);
+      setTags(memoData.tags.join(', '));
+    } else {
+      alert('メモが見つかりませんでした');
+      router.push('/');
+      return;
+    }
+    setIsLoading(false);
+  }, [searchParams, getMemo, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,5 +243,22 @@ export default function EditMemo({ params }: { params: { id: string } }) {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function EditMemo() {
+  return (
+    <Suspense fallback={
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '200px' 
+      }}>
+        <div className="spinner"></div>
+      </div>
+    }>
+      <EditMemoContent />
+    </Suspense>
   );
 }
