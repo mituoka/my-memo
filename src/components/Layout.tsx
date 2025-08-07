@@ -14,7 +14,7 @@ function Header() {
           margin: 0,
           color: 'var(--text-primary)'
         }}>
-          マイメモ
+          📝 マイメモ
         </h1>
       </div>
     </header>

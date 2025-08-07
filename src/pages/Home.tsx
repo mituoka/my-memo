@@ -156,7 +156,7 @@ function Home() {
             margin: '0 0 0.5rem 0',
             color: 'var(--text-primary)'
           }}>
-            メモを作成して始めましょう
+            📝 メモを作成して始めましょう
           </h3>
           
           <p className="text-secondary" style={{ 
