@@ -90,6 +90,29 @@ export const useMemoStorage = () => {
     return Array.from(tagsSet);
   };
 
+  // バックアップから復元
+  const importMemos = (importedMemos: Memo[], replaceAll: boolean = false) => {
+    let updatedMemos: Memo[];
+    
+    if (replaceAll) {
+      // 全て置き換え
+      updatedMemos = importedMemos;
+    } else {
+      // 既存データとマージ（IDが重複する場合は既存データを優先）
+      const existingIds = new Set(memos.map(memo => memo.id));
+      const newMemos = importedMemos.filter(memo => !existingIds.has(memo.id));
+      updatedMemos = [...memos, ...newMemos];
+    }
+    
+    saveMemos(updatedMemos);
+    return updatedMemos.length - memos.length; // 追加されたメモの数
+  };
+
+  // 全メモを削除
+  const clearAllMemos = () => {
+    saveMemos([]);
+  };
+
   return {
     memos,
     isLoaded,
@@ -97,6 +120,8 @@ export const useMemoStorage = () => {
     updateMemo,
     deleteMemo,
     getMemo,
-    getAllTags
+    getAllTags,
+    importMemos,
+    clearAllMemos
   };
 };
