@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
+import { useBackground } from '../contexts/BackgroundContext';
 
 function Home() {
   const { memos, isLoaded, deleteMemo } = useMemoStorage();
+  const { hasBackground } = useBackground();
   const [searchTerm, setSearchTerm] = useState('');
 
   // フィルタリングされたメモ
@@ -122,10 +124,10 @@ function Home() {
       {/* Content */}
       {memos.length === 0 ? (
         // Empty State
-        <div className="card" style={{ 
+        <div className={`card ${hasBackground ? 'card-enhanced' : ''}`} style={{ 
           padding: '3rem 2rem', 
           textAlign: 'center',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+          background: hasBackground ? undefined : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
         }}>
           <div style={{
             width: '64px',
@@ -172,14 +174,14 @@ function Home() {
         </div>
       ) : filteredMemos.length === 0 ? (
         // No Search Results
-        <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
+        <div className={`card ${hasBackground ? 'card-enhanced' : ''}`} style={{ padding: '2rem', textAlign: 'center' }}>
           <p className="text-secondary">「{searchTerm}」に一致するメモが見つかりません</p>
         </div>
       ) : (
         // Memo Grid
         <div className="grid-responsive">
           {filteredMemos.map((memo) => (
-            <div key={memo.id} className="card" style={{ padding: '1.5rem' }}>
+            <div key={memo.id} className={`card ${hasBackground ? 'card-enhanced' : ''}`} style={{ padding: '1.5rem' }}>
               {/* Memo Header */}
               <div style={{ marginBottom: '1rem' }}>
                 <h3 style={{
@@ -296,13 +298,13 @@ function Home() {
       
       {/* Stats */}
       {memos.length > 0 && (
-        <div style={{ 
+        <div className={hasBackground ? 'card-enhanced' : ''} style={{ 
           marginTop: '2rem', 
           textAlign: 'center',
           padding: '1rem',
-          background: 'var(--surface)',
+          background: hasBackground ? undefined : 'var(--surface)',
           borderRadius: '6px',
-          border: '1px solid var(--border)'
+          border: `1px solid ${hasBackground ? 'rgba(226, 232, 240, 0.8)' : 'var(--border)'}`
         }}>
           <span className="text-muted" style={{ fontSize: '0.875rem' }}>
             総メモ数: {memos.length}
