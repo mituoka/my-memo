@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { SettingsPanel } from './SettingsPanel';
-import { useBackground } from '../contexts/BackgroundContext';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 function Header() {
-  const { hasBackground } = useBackground();
   const [showSettings, setShowSettings] = useState(false);
 
   return (
     <>
-      <header className={`header ${hasBackground ? 'header-enhanced' : ''}`}>
+      <header className="header">
         <div className="container" style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
@@ -58,10 +56,8 @@ function Header() {
 }
 
 function Footer() {
-  const { hasBackground } = useBackground();
-  
   return (
-    <footer className={`footer ${hasBackground ? 'footer-enhanced' : ''}`}>
+    <footer className="footer">
       <div className="container">
         <p style={{ margin: 0 }}>
           Built with React • ローカルストレージで動作

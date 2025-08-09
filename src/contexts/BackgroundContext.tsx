@@ -24,7 +24,6 @@ interface BackgroundContextType {
   uploadCustomImage: (file: File) => Promise<void>;
   resetBackground: () => void;
   getPresets: () => BackgroundPreset[];
-  hasBackground: boolean;
 }
 
 const BackgroundContext = createContext<BackgroundContextType | undefined>(undefined);
@@ -226,19 +225,12 @@ export const BackgroundProvider: React.FC<BackgroundProviderProps> = ({ children
 
   const getPresets = () => BACKGROUND_PRESETS;
 
-  // 背景画像が設定されているかを判定
-  const hasBackground = settings.type !== 'none' && (
-    (settings.type === 'custom' && !!settings.customImage) ||
-    (settings.type === 'preset' && !!settings.presetId)
-  );
-
   const value: BackgroundContextType = {
     settings,
     updateSettings,
     uploadCustomImage,
     resetBackground,
-    getPresets,
-    hasBackground
+    getPresets
   };
 
   return (

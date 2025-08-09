@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMemoStorage, Memo } from '../hooks/useMemoStorage';
-import { useBackground } from '../contexts/BackgroundContext';
 
 function EditMemo() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { getMemo, updateMemo } = useMemoStorage();
-  const { hasBackground } = useBackground();
   const [memo, setMemo] = useState<Memo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,7 +82,7 @@ function EditMemo() {
 
   if (!memo) {
     return (
-      <div className={`card ${hasBackground ? 'card-enhanced' : ''}`} style={{ padding: '2rem', textAlign: 'center' }}>
+      <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
         <p className="text-secondary">メモが見つかりませんでした</p>
       </div>
     );
@@ -109,7 +107,7 @@ function EditMemo() {
 
       {/* Form */}
       <form onSubmit={handleSubmit}>
-        <div className={`card ${hasBackground ? 'card-enhanced' : ''}`} style={{ padding: '2rem' }}>
+        <div className="card" style={{ padding: '2rem' }}>
           {/* Title */}
           <div style={{ marginBottom: '1.5rem' }}>
             <label 

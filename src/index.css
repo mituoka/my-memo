@@ -66,24 +66,11 @@ body {
   border-radius: 8px;
   box-shadow: var(--shadow);
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .card:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-1px);
-}
-
-/* 背景画像が設定されている時の可読性向上 */
-.card-enhanced {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-[data-theme="dark"] .card-enhanced {
-  background: rgba(30, 41, 59, 0.9);
-  border: 1px solid rgba(51, 65, 85, 0.8);
 }
 
 .btn {
@@ -177,19 +164,6 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* 背景画像が設定されている時のヘッダー */
-.header-enhanced {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-[data-theme="dark"] .header-enhanced {
-  background: rgba(30, 41, 59, 0.95);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.8);
 }
 
 .main {
@@ -204,19 +178,6 @@ body {
   text-align: center;
   color: var(--text-muted);
   font-size: 0.875rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* 背景画像が設定されている時のフッター */
-.footer-enhanced {
-  background: rgba(255, 255, 255, 0.95);
-  border-top: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-[data-theme="dark"] .footer-enhanced {
-  background: rgba(30, 41, 59, 0.95);
-  border-top: 1px solid rgba(51, 65, 85, 0.8);
 }
 
 /* Utility Classes */

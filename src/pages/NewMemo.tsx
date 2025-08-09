@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
-import { useBackground } from '../contexts/BackgroundContext';
 
 function NewMemo() {
   const navigate = useNavigate();
   const { addMemo } = useMemoStorage();
-  const { hasBackground } = useBackground();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
@@ -62,7 +60,7 @@ function NewMemo() {
 
       {/* Form */}
       <form onSubmit={handleSubmit}>
-        <div className={`card ${hasBackground ? 'card-enhanced' : ''}`} style={{ padding: '2rem' }}>
+        <div className="card" style={{ padding: '2rem' }}>
           {/* Title */}
           <div style={{ marginBottom: '1.5rem' }}>
             <label 
