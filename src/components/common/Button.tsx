@@ -9,6 +9,7 @@ interface ButtonProps {
   disabled?: boolean;
   className?: string;
   title?: string;
+  style?: React.CSSProperties;
 }
 
 export default function Button({ 
@@ -19,7 +20,8 @@ export default function Button({
   size = 'md',
   disabled = false,
   className = '',
-  title
+  title,
+  style
 }: ButtonProps) {
   const baseStyles = {
     border: 'none',
@@ -67,7 +69,8 @@ export default function Button({
   const styles = {
     ...baseStyles,
     ...variantStyles[variant],
-    ...sizeStyles[size]
+    ...sizeStyles[size],
+    ...style
   };
 
   return (

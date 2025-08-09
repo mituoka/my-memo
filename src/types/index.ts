@@ -48,7 +48,7 @@ export interface TagCloudProps {
 }
 
 export interface MemoEditorProps {
-  readonly memo?: ApiMemo;
+  readonly memo?: Memo;
   readonly mode: 'create' | 'edit';
 }
 
