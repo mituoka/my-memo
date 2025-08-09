@@ -6,6 +6,16 @@ export interface Tag {
 }
 
 export interface Memo {
+  readonly id: string;
+  readonly title: string;
+  readonly content: string;
+  readonly tags: readonly string[];
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+// API用のMemo型（後方互換性のため保持）
+export interface ApiMemo {
   readonly id: number;
   readonly title: string;
   readonly content: string;
