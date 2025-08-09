@@ -380,18 +380,6 @@ function Header() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="footer">
-      <div className="container">
-        <p style={{ margin: 0 }}>
-          Built with React • ローカルストレージで動作
-        </p>
-      </div>
-    </footer>
-  );
-}
-
 function Layout({ children }: LayoutProps) {
   return (
     <div className="layout">
@@ -401,7 +389,6 @@ function Layout({ children }: LayoutProps) {
           {children}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
