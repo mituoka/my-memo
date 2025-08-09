@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
-
-export interface Memo {
-  id: string;
-  title: string;
-  content: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Memo } from '../types';
 
 const STORAGE_KEY = 'my_memo_app_data';
 
