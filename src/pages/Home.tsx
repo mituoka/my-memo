@@ -55,14 +55,6 @@ function Home() {
           marginBottom: '1.5rem' 
         }}>
           <div>
-            <h1 style={{ 
-              fontSize: '2rem', 
-              fontWeight: '700', 
-              margin: '0 0 0.5rem 0',
-              color: 'var(--text-primary)'
-            }}>
-              My Memo
-            </h1>
             <p className="text-secondary" style={{ margin: 0 }}>
               {memos.length > 0 ? `${memos.length}件のメモ` : 'まだメモがありません'}
             </p>
