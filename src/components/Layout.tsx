@@ -132,7 +132,7 @@ function Header() {
                     color: 'var(--text-primary)'
                   }}
                 >
-                  🖼️ カスタム背景画像
+                  背景画像
                 </label>
                 <input
                   type="file"
@@ -153,17 +153,7 @@ function Header() {
 
               {/* プリセット背景 */}
               <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.5rem',
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  🎨 プリセット背景
-                </label>
+
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                   {getPresets().map(preset => (
                     <button
