@@ -81,7 +81,7 @@ function Header() {
           margin: 0,
           color: 'var(--text-primary)'
         }}>
-          📝 マイメモ
+          <span>My Memo</span>
         </h1>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', position: 'relative' }}>
