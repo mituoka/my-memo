@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useMemoStorage, Memo } from '../hooks/useMemoStorage';
+import { useMemoStorage } from '../hooks/useMemoStorage';
+import { Memo } from '../types';
 
 function EditMemo() {
   const navigate = useNavigate();

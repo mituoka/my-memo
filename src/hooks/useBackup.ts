@@ -1,4 +1,4 @@
-import { Memo } from './useMemoStorage';
+import { Memo } from '../types';
 
 export interface BackupData {
   version: string;
