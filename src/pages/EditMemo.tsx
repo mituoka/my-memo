@@ -94,21 +94,6 @@ function EditMemo() {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ 
-          fontSize: '2rem', 
-          fontWeight: '700', 
-          margin: '0 0 0.5rem 0',
-          color: 'var(--text-primary)'
-        }}>
-          メモを編集
-        </h1>
-        <p className="text-secondary" style={{ margin: 0 }}>
-          メモの内容を変更して更新してください
-        </p>
-      </div>
-
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="card" style={{ padding: '2rem' }}>
