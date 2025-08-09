@@ -3,14 +3,17 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useBackup } from '../hooks/useBackup';
 import { useBackground } from '../contexts/BackgroundContext';
+import { useFont } from '../contexts/FontContext';
 
 function Header() {
   const { theme, toggleTheme } = useTheme();
   const { memos, importMemos } = useMemoStorage();
   const { exportToJSON, triggerImport } = useBackup();
   const { settings, updateSettings, uploadCustomImage, resetBackground, getPresets } = useBackground();
+  const { currentFont, setFont, fontOptions } = useFont();
   const [showBackupMenu, setShowBackupMenu] = useState(false);
   const [showBackgroundMenu, setShowBackgroundMenu] = useState(false);
+  const [showFontMenu, setShowFontMenu] = useState(false);
 
   const handleExport = () => {
     exportToJSON(memos);
@@ -64,6 +67,11 @@ function Header() {
     setShowBackgroundMenu(false);
   };
 
+  const handleFontChange = (fontId: string) => {
+    setFont(fontId);
+    setShowFontMenu(false);
+  };
+
   return (
     <header className="header">
       <div className="container" style={{ 
@@ -81,6 +89,119 @@ function Header() {
         </h1>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', position: 'relative' }}>
+          {/* フォント設定メニュー */}
+          <button
+            onClick={() => setShowFontMenu(!showFontMenu)}
+            className="btn btn-secondary"
+            style={{
+              padding: '0.5rem',
+              width: '2.5rem',
+              height: '2.5rem',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1rem'
+            }}
+            title="フォント設定"
+          >
+            🔤
+          </button>
+
+          {showFontMenu && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                right: '9rem',
+                marginTop: '0.5rem',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                boxShadow: 'var(--shadow-lg)',
+                zIndex: 1000,
+                minWidth: '300px',
+                maxHeight: '400px',
+                overflow: 'auto'
+              }}
+            >
+              <div style={{ padding: '1rem 1rem 0.5rem 1rem', borderBottom: '1px solid var(--border)' }}>
+                <h3 style={{ 
+                  margin: 0, 
+                  fontSize: '0.875rem', 
+                  fontWeight: '600',
+                  color: 'var(--text-primary)'
+                }}>
+                  フォント選択
+                </h3>
+                <p style={{ 
+                  margin: '0.25rem 0 0 0', 
+                  fontSize: '0.75rem', 
+                  color: 'var(--text-muted)' 
+                }}>
+                  現在: {currentFont.name}
+                </p>
+              </div>
+
+              {fontOptions.map(font => (
+                <button
+                  key={font.id}
+                  onClick={() => handleFontChange(font.id)}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    background: currentFont.id === font.id ? 'var(--background)' : 'transparent',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid var(--border)',
+                    fontFamily: font.fontFamily,
+                    fontSize: '0.875rem',
+                    color: 'var(--text-primary)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (currentFont.id !== font.id) {
+                      e.currentTarget.style.background = 'var(--background)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentFont.id !== font.id) {
+                      e.currentTarget.style.background = 'transparent';
+                    }
+                  }}
+                >
+                  <div style={{ fontWeight: '500', marginBottom: '0.125rem' }}>
+                    {font.name}
+                    {currentFont.id === font.id && (
+                      <span style={{ 
+                        float: 'right', 
+                        color: 'var(--primary)',
+                        fontSize: '0.75rem'
+                      }}>
+                        ✓
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ 
+                    fontSize: '0.75rem', 
+                    color: 'var(--text-muted)',
+                    lineHeight: 1.3
+                  }}>
+                    {font.description}
+                  </div>
+                  <div style={{ 
+                    marginTop: '0.25rem',
+                    fontSize: '0.875rem',
+                    fontFamily: font.fontFamily,
+                    color: 'var(--text-secondary)'
+                  }}>
+                    サンプルテキスト - これは日本語のフォントプレビューです
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* 背景設定メニュー */}
           <button
             onClick={() => setShowBackgroundMenu(!showBackgroundMenu)}
@@ -345,7 +466,7 @@ function Header() {
       </div>
       
       {/* メニュー外クリックでメニューを閉じる */}
-      {(showBackupMenu || showBackgroundMenu) && (
+      {(showBackupMenu || showBackgroundMenu || showFontMenu) && (
         <div
           style={{
             position: 'fixed',
@@ -358,6 +479,7 @@ function Header() {
           onClick={() => {
             setShowBackupMenu(false);
             setShowBackgroundMenu(false);
+            setShowFontMenu(false);
           }}
         />
       )}
