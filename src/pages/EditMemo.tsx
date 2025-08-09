@@ -6,7 +6,7 @@ import { Memo } from '../types';
 function EditMemo() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { getMemo, updateMemo } = useMemoStorage();
+  const { getMemo, updateMemo, isLoaded } = useMemoStorage();
   const [memo, setMemo] = useState<Memo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,6 +15,8 @@ function EditMemo() {
   const [tags, setTags] = useState('');
 
   useEffect(() => {
+    if (!isLoaded) return;
+    
     if (!id) {
       alert('メモIDが指定されていません');
       navigate('/');
@@ -22,6 +24,7 @@ function EditMemo() {
     }
 
     const memoData = getMemo(id);
+    
     if (memoData) {
       setMemo(memoData);
       setTitle(memoData.title);
@@ -33,7 +36,7 @@ function EditMemo() {
       return;
     }
     setIsLoading(false);
-  }, [id, getMemo, navigate]);
+  }, [id, getMemo, navigate, isLoaded]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
