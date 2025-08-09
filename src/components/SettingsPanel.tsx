@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useBackground } from '../contexts/BackgroundContext';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useBackup } from '../hooks/useBackup';
 
@@ -8,15 +9,31 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
-type TabType = 'theme' | 'backup';
+type TabType = 'theme' | 'background' | 'backup';
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
   const { theme, toggleTheme } = useTheme();
+  const { settings, updateSettings, uploadCustomImage, resetBackground, getPresets } = useBackground();
   const { memos, importMemos } = useMemoStorage();
   const { exportToJSON, triggerImport } = useBackup();
   const [activeTab, setActiveTab] = useState<TabType>('theme');
 
   if (!isOpen) return null;
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        await uploadCustomImage(file);
+      } catch (error) {
+        alert(error instanceof Error ? error.message : '画像のアップロードに失敗しました');
+      }
+    }
+  };
+
+  const handlePresetSelect = (presetId: string) => {
+    updateSettings({ type: 'preset', presetId });
+  };
 
   const handleExport = () => {
     exportToJSON(memos);
@@ -48,6 +65,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
 
   const tabs = [
     { id: 'theme' as TabType, label: '🌓 テーマ', icon: '🌓' },
+    { id: 'background' as TabType, label: '🖼️ 背景', icon: '🖼️' },
     { id: 'backup' as TabType, label: '💾 バックアップ', icon: '💾' }
   ];
 
@@ -183,6 +201,126 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
             </div>
           )}
 
+          {/* 背景設定 */}
+          {activeTab === 'background' && (
+            <div>
+              <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                🖼️ 背景画像設定
+              </h3>
+              
+              {/* カスタム画像アップロード */}
+              <div style={{ marginBottom: '2rem' }}>
+                <h4 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                  カスタム背景画像
+                </h4>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid var(--border)',
+                    borderRadius: '4px',
+                    fontSize: '0.875rem'
+                  }}
+                />
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
+                  JPG, PNG, GIF (最大5MB)
+                </p>
+              </div>
+
+              {/* プリセット背景 */}
+              <div style={{ marginBottom: '2rem' }}>
+                <h4 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                  プリセット背景
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '0.75rem' }}>
+                  {getPresets().map(preset => (
+                    <button
+                      key={preset.id}
+                      onClick={() => handlePresetSelect(preset.id)}
+                      style={{
+                        padding: '0.5rem',
+                        border: settings.presetId === preset.id ? '2px solid var(--primary)' : '1px solid var(--border)',
+                        borderRadius: '8px',
+                        background: preset.thumbnail,
+                        height: '60px',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                      title={preset.name}
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          background: 'rgba(0,0,0,0.8)',
+                          color: 'white',
+                          fontSize: '0.625rem',
+                          padding: '0.25rem',
+                          textAlign: 'center'
+                        }}
+                      >
+                        {preset.name}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 透明度・ブラー設定 */}
+              {settings.type !== 'none' && (
+                <div style={{ marginBottom: '2rem' }}>
+                  <h4 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                    表示調整
+                  </h4>
+                  <div style={{ display: 'grid', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8125rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                        透明度: {Math.round(settings.opacity * 100)}%
+                      </label>
+                      <input
+                        type="range"
+                        min="0.1"
+                        max="1"
+                        step="0.1"
+                        value={settings.opacity}
+                        onChange={(e) => updateSettings({ opacity: parseFloat(e.target.value) })}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8125rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                        ブラー: {settings.blur}px
+                      </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="10"
+                        step="1"
+                        value={settings.blur}
+                        onChange={(e) => updateSettings({ blur: parseInt(e.target.value) })}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* リセット */}
+              <button
+                onClick={resetBackground}
+                className="btn btn-secondary"
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                🗑️ 背景をリセット
+              </button>
+            </div>
+          )}
 
           {/* バックアップ設定 */}
           {activeTab === 'backup' && (
