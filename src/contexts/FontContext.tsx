@@ -39,6 +39,12 @@ const FONT_OPTIONS: FontOption[] = [
     description: 'Windows標準の読みやすいフォント'
   },
   {
+    id: 'yumincho',
+    name: '游明朝',
+    fontFamily: '"Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "HG Mincho E", "Noto Serif CJK JP", serif',
+    description: '美しい明朝体の日本語フォント'
+  },
+  {
     id: 'system',
     name: 'システムデフォルト',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',

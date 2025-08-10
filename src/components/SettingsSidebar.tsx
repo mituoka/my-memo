@@ -2,6 +2,7 @@
 
 import React, { memo } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useFont } from '../contexts/FontContext';
 
 interface SettingsSidebarProps {
   readonly isOpen: boolean;
@@ -17,6 +18,8 @@ function SettingsSidebar({ isOpen, onClose }: SettingsSidebarProps) {
     theme, setTheme, customColors, setCustomColors,
     // 背景画像関連のstate削除
   } = useTheme();
+  
+  const { currentFont, setFont, fontOptions } = useFont();
 
   const getThemeName = (currentTheme: string) => {
     switch (currentTheme) {
@@ -258,6 +261,46 @@ function SettingsSidebar({ isOpen, onClose }: SettingsSidebarProps) {
                 </div>
               </div>
             )}
+            
+            {/* フォント設定 */}
+            <div className="mt-6 space-y-3">
+              <span className="text-sm font-medium">フォント</span>
+              
+              <div className="space-y-2">
+                {fontOptions.map((font) => (
+                  <button
+                    key={font.id}
+                    onClick={() => setFont(font.id)}
+                    className={`w-full text-left p-3 rounded-lg border transition-all hover:bg-gray-50 dark:hover:bg-gray-800 custom:hover:bg-purple-900/10 ${
+                      currentFont.id === font.id
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 custom:bg-purple-900/20 custom:border-purple-500'
+                        : 'border-gray-200 dark:border-gray-700 custom:border-gray-700'
+                    }`}
+                    style={currentFont.id === font.id ? { fontFamily: font.fontFamily } : {}}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-sm">{font.name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 custom:text-gray-400 mt-1">
+                          {font.description}
+                        </div>
+                      </div>
+                      {currentFont.id === font.id && (
+                        <div className="w-4 h-4 bg-blue-500 custom:bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+              
+              <p className="text-xs text-gray-500 dark:text-gray-400 custom:text-gray-400">
+                現在のフォント: {currentFont.name}
+              </p>
+            </div>
           </div>
 
           {/* アプリ情報セクション */}
