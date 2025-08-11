@@ -227,15 +227,25 @@ export function MemoForm({
           accept="image/*"
           onChange={(e) => {
             const files = Array.from(e.target.files || []);
-            const imagePromises = files.map(file => {
+            console.log('選択されたファイル数:', files.length);
+            
+            const imagePromises = files.map((file, index) => {
+              console.log(`ファイル${index + 1}:`, file.name, file.type, file.size);
               return new Promise<string>((resolve) => {
                 const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target?.result as string);
+                reader.onload = (e) => {
+                  const result = e.target?.result as string;
+                  console.log(`ファイル${index + 1} 読み込み完了:`, result.substring(0, 50) + '...');
+                  resolve(result);
+                };
                 reader.readAsDataURL(file);
               });
             });
             
-            Promise.all(imagePromises).then(onImageAdd);
+            Promise.all(imagePromises).then((results) => {
+              console.log('全ファイル読み込み完了:', results.length);
+              onImageAdd(results);
+            });
           }}
           style={{
             width: '100%',
@@ -387,10 +397,15 @@ export const useMemoForm = (initialState?: Partial<MemoFormState>) => {
   }, []);
 
   const addImages = useCallback((newImages: string[]) => {
-    setState(prev => ({
-      ...prev,
-      images: [...prev.images, ...newImages],
-    }));
+    console.log('画像を追加:', newImages.length + '枚');
+    setState(prev => {
+      const updatedState = {
+        ...prev,
+        images: [...prev.images, ...newImages],
+      };
+      console.log('更新後のstate:', updatedState);
+      return updatedState;
+    });
   }, []);
 
   const removeImage = useCallback((index: number) => {

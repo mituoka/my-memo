@@ -33,6 +33,7 @@ export const useMemoStorage = () => {
 
   // メモを追加
   const addMemo = (memo: Omit<Memo, 'id' | 'createdAt' | 'updatedAt'>) => {
+    console.log('addMemo受信データ:', memo);
     const now = new Date().toISOString();
     const newMemo: Memo = {
       ...memo,
@@ -41,26 +42,33 @@ export const useMemoStorage = () => {
       updatedAt: now,
       images: memo.images || [],
     };
+    console.log('作成されるメモ:', newMemo);
     
     const updatedMemos = [...memos, newMemo];
     saveMemos(updatedMemos);
+    console.log('保存後のメモ一覧:', updatedMemos);
     return newMemo;
   };
 
   // メモを更新
   const updateMemo = (id: string, updates: Partial<Omit<Memo, 'id' | 'createdAt'>>) => {
+    console.log('updateMemo受信データ:', { id, updates });
     const updatedMemos = memos.map(memo => {
       if (memo.id === id) {
-        return { 
+        const updatedMemo = { 
           ...memo, 
           ...updates, 
           updatedAt: new Date().toISOString() 
         };
+        console.log('更新前メモ:', memo);
+        console.log('更新後メモ:', updatedMemo);
+        return updatedMemo;
       }
       return memo;
     });
     
     saveMemos(updatedMemos);
+    console.log('保存後のメモ一覧:', updatedMemos);
   };
 
   // メモを削除

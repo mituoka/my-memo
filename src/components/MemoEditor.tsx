@@ -16,7 +16,7 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
   const { state, actions } = useMemoForm({
     title: memo?.title || '',
     content: memo?.content || '',
-    tags: memo?.tags.map(tag => tag.name) || [],
+    tags: memo?.tags || [],
     images: memo?.images || [],
   });
 
@@ -26,7 +26,7 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
       actions.reset({
         title: memo.title,
         content: memo.content,
-        tags: memo.tags.map(tag => tag.name),
+        tags: memo.tags,
         images: memo.images || [],
       });
     }
@@ -44,21 +44,34 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
     setError(null);
     
     try {
+      console.log('保存前のstate:', { 
+        title: state.title.trim(), 
+        content: state.content.trim(), 
+        tags: state.tags, 
+        images: state.images,
+        imagesLength: state.images.length 
+      });
+      
       if (mode === 'edit' && memo) {
-        updateMemoStorage(memo.id, {
+        const updateData = {
           title: state.title.trim(),
           content: state.content.trim(),
           tags: state.tags,
           images: state.images,
-        });
+        };
+        console.log('更新データ:', updateData);
+        updateMemoStorage(memo.id, updateData);
         navigate('/');
       } else {
-        addMemo({
+        const createData = {
           title: state.title.trim(),
           content: state.content.trim(),
           tags: state.tags,
           images: state.images,
-        });
+        };
+        console.log('作成データ:', createData);
+        const result = addMemo(createData);
+        console.log('作成結果:', result);
         navigate('/');
       }
     } catch (error) {
