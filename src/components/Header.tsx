@@ -122,27 +122,12 @@ function Header() {
                 borderRadius: '8px',
                 boxShadow: 'var(--shadow-lg)',
                 zIndex: 1000,
-                minWidth: '300px',
-                maxHeight: '400px',
-                overflow: 'auto'
+                minWidth: '200px',
+                overflow: 'hidden'
               }}
             >
-              <div style={{ padding: '1rem 1rem 0.5rem 1rem', borderBottom: '1px solid var(--border)' }}>
-                <h3 style={{ 
-                  margin: 0, 
-                  fontSize: '0.875rem', 
-                  fontWeight: '600',
-                  color: 'var(--text-primary)'
-                }}>
-                  フォント選択
-                </h3>
-                <p style={{ 
-                  margin: '0.25rem 0 0 0', 
-                  fontSize: '0.75rem', 
-                  color: 'var(--text-muted)' 
-                }}>
-                  現在: {currentFont.name}
-                </p>
+              <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                フォント: {currentFont.name}
               </div>
 
               {fontOptions.map(font => (
@@ -151,7 +136,7 @@ function Header() {
                   onClick={() => handleFontChange(font.id)}
                   style={{
                     width: '100%',
-                    padding: '0.75rem 1rem',
+                    padding: '0.6rem 0.75rem',
                     background: currentFont.id === font.id ? 'var(--background)' : 'transparent',
                     border: 'none',
                     textAlign: 'left',
@@ -159,7 +144,10 @@ function Header() {
                     borderBottom: '1px solid var(--border)',
                     fontFamily: font.fontFamily,
                     fontSize: '0.875rem',
-                    color: 'var(--text-primary)'
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                   }}
                   onMouseEnter={(e) => {
                     if (currentFont.id !== font.id) {
@@ -172,33 +160,10 @@ function Header() {
                     }
                   }}
                 >
-                  <div style={{ fontWeight: '500', marginBottom: '0.125rem' }}>
-                    {font.name}
-                    {currentFont.id === font.id && (
-                      <span style={{ 
-                        float: 'right', 
-                        color: 'var(--primary)',
-                        fontSize: '0.75rem'
-                      }}>
-                        ✓
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ 
-                    fontSize: '0.75rem', 
-                    color: 'var(--text-muted)',
-                    lineHeight: 1.3
-                  }}>
-                    {font.description}
-                  </div>
-                  <div style={{ 
-                    marginTop: '0.25rem',
-                    fontSize: '0.875rem',
-                    fontFamily: font.fontFamily,
-                    color: 'var(--text-secondary)'
-                  }}>
-                    サンプルテキスト - これは日本語のフォントプレビューです
-                  </div>
+                  <span>{font.name}</span>
+                  {currentFont.id === font.id && (
+                    <span style={{ color: 'var(--primary)', fontSize: '0.75rem' }}>✓</span>
+                  )}
                 </button>
               ))}
             </div>
