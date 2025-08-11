@@ -39,6 +39,7 @@ export const useMemoStorage = () => {
       id: `memo_${Date.now()}`,
       createdAt: now,
       updatedAt: now,
+      images: memo.images || [],
     };
     
     const updatedMemos = [...memos, newMemo];

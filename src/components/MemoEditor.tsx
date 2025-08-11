@@ -1,17 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { MemoForm, useMemoForm } from './MemoForm';
-import { useCreateMemo, useUpdateMemo } from '@/hooks/useMemoApi';
-import type { MemoEditorProps, MemoCreate, MemoUpdate } from '@/types';
+import { useMemoStorage } from '../hooks/useMemoStorage';
+import type { MemoEditorProps } from '@/types';
 
 export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
   const [isSaving, setIsSaving] = useState(false);
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   
-  const { createMemo, error: createError } = useCreateMemo();
-  const { updateMemo, error: updateError } = useUpdateMemo();
+  const { addMemo, updateMemo: updateMemoStorage } = useMemoStorage();
   
   const { state, actions } = useMemoForm({
     title: memo?.title || '',
@@ -36,54 +36,42 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
     e.preventDefault();
     
     if (!state.title.trim()) {
-      alert('タイトルを入力してください');
+      setError('タイトルを入力してください');
       return;
     }
 
     setIsSaving(true);
+    setError(null);
     
     try {
       if (mode === 'edit' && memo) {
-        const updateData: MemoUpdate = {
-          title: state.title,
-          content: state.content,
+        updateMemoStorage(memo.id, {
+          title: state.title.trim(),
+          content: state.content.trim(),
           tags: state.tags,
           images: state.images,
-        };
-        
-        const result = await updateMemo(memo.id, updateData);
-        if (result) {
-          router.push(`/memo/${memo.id}`);
-        }
+        });
+        navigate('/');
       } else {
-        const createData: MemoCreate = {
-          title: state.title,
-          content: state.content,
+        addMemo({
+          title: state.title.trim(),
+          content: state.content.trim(),
           tags: state.tags,
           images: state.images,
-        };
-        
-        const result = await createMemo(createData);
-        if (result) {
-          router.push(`/memo/${result.id}`);
-        }
+        });
+        navigate('/');
       }
     } catch (error) {
       console.error('保存中にエラーが発生しました:', error);
+      setError('保存中にエラーが発生しました');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
-    if (mode === 'edit' && memo) {
-      router.push(`/memo/${memo.id}`);
-    } else {
-      router.push('/');
-    }
+    navigate('/');
   };
-
-  const error = createError || updateError;
 
   return (
     <MemoForm
