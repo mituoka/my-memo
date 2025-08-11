@@ -53,53 +53,93 @@ export function MemoForm({
   const errorMessage = getErrorMessage(error);
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <div className="card" style={{ padding: '2rem' }}>
+      <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {errorMessage && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4">
-          <p className="text-red-700">{errorMessage}</p>
+        <div style={{
+          background: 'var(--error-bg, #fef2f2)',
+          borderLeft: '4px solid var(--error)',
+          padding: '1rem',
+          borderRadius: '4px'
+        }}>
+          <p style={{ color: 'var(--error)', margin: 0 }}>{errorMessage}</p>
         </div>
       )}
       
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          タイトル <span className="text-red-500">*</span>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <label 
+          htmlFor="title" 
+          style={{ 
+            display: 'block',
+            fontWeight: '500',
+            marginBottom: '0.5rem',
+            color: 'var(--text-primary)',
+            fontSize: '0.875rem'
+          }}
+        >
+          タイトル <span style={{ color: 'var(--error)' }}>*</span>
         </label>
         <input
           type="text"
           id="title"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          className="input"
           placeholder="タイトルを入力"
           required
         />
       </div>
       
-      <div>
-        <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <label 
+          htmlFor="content" 
+          style={{ 
+            display: 'block',
+            fontWeight: '500',
+            marginBottom: '0.5rem',
+            color: 'var(--text-primary)',
+            fontSize: '0.875rem'
+          }}
+        >
           内容
         </label>
         <textarea
           id="content"
           value={content}
           onChange={(e) => onContentChange(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[200px] dark:bg-gray-700 dark:text-white"
+          className="input textarea"
           placeholder="メモの内容を入力"
+          style={{ minHeight: '200px' }}
         />
       </div>
       
-      <div>
-        <label htmlFor="tag-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <label 
+          htmlFor="tag-input" 
+          style={{ 
+            display: 'block',
+            fontWeight: '500',
+            marginBottom: '0.5rem',
+            color: 'var(--text-primary)',
+            fontSize: '0.875rem'
+          }}
+        >
           タグ
         </label>
-        <div className="flex">
+        <div style={{ display: 'flex' }}>
           <input
             type="text"
             id="tag-input"
             value={tagInput}
             onChange={(e) => onTagInputChange(e.target.value)}
-            className="block flex-1 border border-gray-300 dark:border-gray-600 rounded-l-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+            className="input"
             placeholder="タグを入力"
+            style={{ 
+              flex: 1,
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+              marginBottom: 0
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -110,26 +150,56 @@ export function MemoForm({
           <button
             type="button"
             onClick={onAddTag}
-            className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+            className="btn btn-primary"
+            style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+              marginLeft: '-1px'
+            }}
           >
             追加
           </button>
         </div>
         
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '0.5rem', 
+            marginTop: '0.75rem' 
+          }}>
             {tags.map(tag => (
               <span 
                 key={tag} 
-                className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full flex items-center"
+                style={{
+                  background: 'var(--primary-light, #dbeafe)',
+                  color: 'var(--primary-dark, #1e40af)',
+                  fontSize: '0.875rem',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '9999px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}
               >
                 {tag}
                 <button 
                   type="button"
                   onClick={() => onRemoveTag(tag)} 
-                  className="ml-1 text-blue-800 dark:text-blue-200 hover:text-blue-500 focus:outline-none"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'inherit',
+                    cursor: 'pointer',
+                    fontSize: '1.25rem',
+                    lineHeight: 1,
+                    padding: 0,
+                    marginLeft: '0.25rem'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
-                  &times;
+                  ×
                 </button>
               </span>
             ))}
@@ -137,8 +207,17 @@ export function MemoForm({
         )}
       </div>
       
-      <div>
-        <label htmlFor="images" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <label 
+          htmlFor="images" 
+          style={{ 
+            display: 'block',
+            fontWeight: '500',
+            marginBottom: '0.5rem',
+            color: 'var(--text-primary)',
+            fontSize: '0.875rem'
+          }}
+        >
           画像
         </label>
         <input
@@ -158,29 +237,69 @@ export function MemoForm({
             
             Promise.all(imagePromises).then(onImageAdd);
           }}
-          className="block w-full text-sm text-gray-500 dark:text-gray-400
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-md file:border-0
-            file:text-sm file:font-medium
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100
-            dark:file:bg-blue-900 dark:file:text-blue-200
-            dark:hover:file:bg-blue-800"
+          style={{
+            width: '100%',
+            padding: '0.5rem',
+            border: '1px solid var(--border)',
+            borderRadius: '4px',
+            background: 'var(--surface)',
+            color: 'var(--text-primary)',
+            fontSize: '0.875rem'
+          }}
         />
         
         {images.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+            gap: '0.75rem',
+            marginTop: '0.75rem'
+          }}>
             {images.map((image, index) => (
-              <div key={index} className="relative group">
+              <div 
+                key={index} 
+                style={{ position: 'relative', borderRadius: '4px', overflow: 'hidden' }}
+                onMouseEnter={(e) => {
+                  const button = e.currentTarget.querySelector('button');
+                  if (button) (button as HTMLElement).style.opacity = '1';
+                }}
+                onMouseLeave={(e) => {
+                  const button = e.currentTarget.querySelector('button');
+                  if (button) (button as HTMLElement).style.opacity = '0';
+                }}
+              >
                 <img
                   src={image}
                   alt={`Upload ${index + 1}`}
-                  className="w-full h-24 object-cover rounded border"
+                  style={{
+                    width: '100%',
+                    height: '96px',
+                    objectFit: 'cover',
+                    border: '1px solid var(--border)',
+                    borderRadius: '4px'
+                  }}
                 />
                 <button
                   type="button"
                   onClick={() => onImageRemove(index)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    background: 'var(--error, #ef4444)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    opacity: 0,
+                    transition: 'opacity 0.2s'
+                  }}
                 >
                   ×
                 </button>
@@ -190,34 +309,38 @@ export function MemoForm({
         )}
       </div>
       
-      <div className="flex justify-end space-x-4">
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        gap: '1rem',
+        marginTop: '2rem'
+      }}>
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+          className="btn btn-secondary"
           disabled={isSaving}
         >
           キャンセル
         </button>
         <button
           type="submit"
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-700 dark:hover:bg-blue-800"
+          className="btn btn-primary"
           disabled={isSaving}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}
         >
-          {isSaving ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              保存中...
-            </span>
-          ) : (
-            '保存'
+          {isSaving && (
+            <div className="spinner" style={{ width: '16px', height: '16px' }}></div>
           )}
+          {isSaving ? '保存中...' : '保存'}
         </button>
       </div>
-    </form>
+      </form>
+    </div>
   );
 }
 

@@ -20,9 +20,7 @@ function NewMemo() {
       </div>
 
       {/* Form */}
-      <div className="card" style={{ padding: '2rem' }}>
-        <MemoEditor mode="create" />
-      </div>
+      <MemoEditor mode="create" />
     </div>
   );
 }
