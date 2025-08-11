@@ -212,6 +212,7 @@ function Header() {
               {/* カスタム画像アップロード */}
               <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
                 <label
+                  htmlFor="background-upload"
                   style={{
                     display: 'block',
                     fontSize: '0.875rem',
@@ -223,6 +224,7 @@ function Header() {
                   背景画像
                 </label>
                 <input
+                  id="background-upload"
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
@@ -467,21 +469,33 @@ function Header() {
       
       {/* メニュー外クリックでメニューを閉じる */}
       {(showBackupMenu || showBackgroundMenu || showFontMenu) && (
-        <div
+        <button
+          type="button"
           style={{
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 999
+            zIndex: 999,
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            cursor: 'default'
           }}
           onClick={() => {
             setShowBackupMenu(false);
             setShowBackgroundMenu(false);
             setShowFontMenu(false);
           }}
-        />
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setShowBackupMenu(false);
+              setShowBackgroundMenu(false);
+              setShowFontMenu(false);
+            }
+          }}
+        </button>
       )}
     </header>
   );
