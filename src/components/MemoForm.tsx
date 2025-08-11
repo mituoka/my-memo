@@ -22,6 +22,9 @@ interface MemoFormProps {
   readonly tags: readonly string[];
   readonly onAddTag: () => void;
   readonly onRemoveTag: (tag: string) => void;
+  readonly images: readonly string[];
+  readonly onImageAdd: (images: string[]) => void;
+  readonly onImageRemove: (index: number) => void;
   readonly onSubmit: (e: React.FormEvent) => Promise<void>;
   readonly onCancel: () => void;
   readonly isSaving: boolean;
@@ -39,6 +42,9 @@ export function MemoForm({
   tags,
   onAddTag,
   onRemoveTag,
+  images,
+  onImageAdd,
+  onImageRemove,
   onSubmit,
   onCancel,
   isSaving,
@@ -131,6 +137,59 @@ export function MemoForm({
         )}
       </div>
       
+      <div>
+        <label htmlFor="images" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          画像
+        </label>
+        <input
+          type="file"
+          id="images"
+          multiple
+          accept="image/*"
+          onChange={(e) => {
+            const files = Array.from(e.target.files || []);
+            const imagePromises = files.map(file => {
+              return new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target?.result as string);
+                reader.readAsDataURL(file);
+              });
+            });
+            
+            Promise.all(imagePromises).then(onImageAdd);
+          }}
+          className="block w-full text-sm text-gray-500 dark:text-gray-400
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-md file:border-0
+            file:text-sm file:font-medium
+            file:bg-blue-50 file:text-blue-700
+            hover:file:bg-blue-100
+            dark:file:bg-blue-900 dark:file:text-blue-200
+            dark:hover:file:bg-blue-800"
+        />
+        
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+            {images.map((image, index) => (
+              <div key={index} className="relative group">
+                <img
+                  src={image}
+                  alt={`Upload ${index + 1}`}
+                  className="w-full h-24 object-cover rounded border"
+                />
+                <button
+                  type="button"
+                  onClick={() => onImageRemove(index)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      
       <div className="flex justify-end space-x-4">
         <button
           type="button"
@@ -169,6 +228,7 @@ export const useMemoForm = (initialState?: Partial<MemoFormState>) => {
     content: initialState?.content || '',
     tagInput: '',
     tags: initialState?.tags || [],
+    images: initialState?.images || [],
   });
 
   const updateTitle = useCallback((title: string) => {
@@ -201,12 +261,27 @@ export const useMemoForm = (initialState?: Partial<MemoFormState>) => {
     }));
   }, []);
 
+  const addImages = useCallback((newImages: string[]) => {
+    setState(prev => ({
+      ...prev,
+      images: [...prev.images, ...newImages],
+    }));
+  }, []);
+
+  const removeImage = useCallback((index: number) => {
+    setState(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  }, []);
+
   const reset = useCallback((newState?: Partial<MemoFormState>) => {
     setState({
       title: newState?.title || '',
       content: newState?.content || '',
       tagInput: '',
       tags: newState?.tags || [],
+      images: newState?.images || [],
     });
   }, []);
 
@@ -218,6 +293,8 @@ export const useMemoForm = (initialState?: Partial<MemoFormState>) => {
       updateTagInput,
       addTag,
       removeTag,
+      addImages,
+      removeImage,
       reset,
     },
   };

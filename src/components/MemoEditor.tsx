@@ -17,6 +17,7 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
     title: memo?.title || '',
     content: memo?.content || '',
     tags: memo?.tags.map(tag => tag.name) || [],
+    images: memo?.images || [],
   });
 
   // メモデータが変更された場合、フォームを更新
@@ -26,6 +27,7 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
         title: memo.title,
         content: memo.content,
         tags: memo.tags.map(tag => tag.name),
+        images: memo.images || [],
       });
     }
   }, [memo, mode, actions]);
@@ -46,6 +48,7 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
           title: state.title,
           content: state.content,
           tags: state.tags,
+          images: state.images,
         };
         
         const result = await updateMemo(memo.id, updateData);
@@ -57,6 +60,7 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
           title: state.title,
           content: state.content,
           tags: state.tags,
+          images: state.images,
         };
         
         const result = await createMemo(createData);
@@ -92,6 +96,9 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
       tags={state.tags}
       onAddTag={actions.addTag}
       onRemoveTag={actions.removeTag}
+      images={state.images}
+      onImageAdd={actions.addImages}
+      onImageRemove={actions.removeImage}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
       isSaving={isSaving}

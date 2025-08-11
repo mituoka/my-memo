@@ -495,7 +495,7 @@ function Header() {
               setShowFontMenu(false);
             }
           }}
-        </button>
+        />
       )}
     </header>
   );

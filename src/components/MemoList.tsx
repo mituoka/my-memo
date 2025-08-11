@@ -77,6 +77,15 @@ function MemoList({ selectedTag }: Readonly<MemoListProps>) {
             style={{background: 'var(--background)', borderColor: 'var(--custom-secondary)', borderWidth: 1, borderStyle: 'solid'}} 
             >
               <div className="p-4">
+                {memo.images && memo.images.length > 0 && (
+                  <div className="mb-3">
+                    <img
+                      src={memo.images[0]}
+                      alt={memo.title}
+                      className="w-full h-32 object-cover rounded"
+                    />
+                  </div>
+                )}
                 <h3 className="font-medium text-lg truncate" style={{color: 'var(--foreground)'}}>{memo.title}</h3>
                 <p className="text-sm line-clamp-3 mt-1" style={{color: 'var(--foreground)', opacity: 0.8}}>{memo.content}</p>
                 

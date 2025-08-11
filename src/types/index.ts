@@ -10,6 +10,7 @@ export interface Memo {
   readonly title: string;
   readonly content: string;
   readonly tags: readonly string[];
+  readonly images?: readonly string[];
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -29,12 +30,14 @@ export interface MemoCreate {
   readonly title: string;
   readonly content: string;
   readonly tags: readonly string[];
+  readonly images?: readonly string[];
 }
 
 export interface MemoUpdate {
   readonly title?: string;
   readonly content?: string;
   readonly tags?: readonly string[];
+  readonly images?: readonly string[];
 }
 
 // コンポーネントのプロパティ型
@@ -58,6 +61,7 @@ export interface MemoFormState {
   readonly content: string;
   readonly tagInput: string;
   readonly tags: readonly string[];
+  readonly images: readonly string[];
 }
 
 // API応答の型
