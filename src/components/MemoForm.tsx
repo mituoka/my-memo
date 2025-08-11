@@ -232,18 +232,60 @@ export function MemoForm({
             const imagePromises = files.map((file, index) => {
               console.log(`ファイル${index + 1}:`, file.name, file.type, file.size);
               return new Promise<string>((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                  const result = e.target?.result as string;
-                  console.log(`ファイル${index + 1} 読み込み完了:`, result.substring(0, 50) + '...');
-                  resolve(result);
+                // 画像をリサイズ・圧縮する関数
+                const resizeAndCompress = (file: File) => {
+                  const canvas = document.createElement('canvas');
+                  const ctx = canvas.getContext('2d')!;
+                  const img = new Image();
+                  
+                  img.onload = () => {
+                    // 最大サイズを800pxに設定（アスペクト比を維持）
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    
+                    let { width, height } = img;
+                    
+                    if (width > height) {
+                      if (width > MAX_WIDTH) {
+                        height = (height * MAX_WIDTH) / width;
+                        width = MAX_WIDTH;
+                      }
+                    } else {
+                      if (height > MAX_HEIGHT) {
+                        width = (width * MAX_HEIGHT) / height;
+                        height = MAX_HEIGHT;
+                      }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // 画像を描画
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // 圧縮（品質0.8で約80%の品質）
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    console.log(`ファイル${index + 1} 圧縮完了:`, 
+                      `元サイズ: ${file.size} bytes`, 
+                      `圧縮後サイズ: ${Math.round(compressedDataUrl.length * 0.75)} bytes`);
+                    
+                    resolve(compressedDataUrl);
+                  };
+                  
+                  // Fileオブジェクトを画像として読み込み
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                    img.src = e.target?.result as string;
+                  };
+                  reader.readAsDataURL(file);
                 };
-                reader.readAsDataURL(file);
+                
+                resizeAndCompress(file);
               });
             });
             
             Promise.all(imagePromises).then((results) => {
-              console.log('全ファイル読み込み完了:', results.length);
+              console.log('全ファイル処理完了:', results.length);
               onImageAdd(results);
             });
           }}

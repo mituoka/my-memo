@@ -44,13 +44,18 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
     setError(null);
     
     try {
+      console.log('=== 保存処理開始 ===');
       console.log('保存前のstate:', { 
         title: state.title.trim(), 
         content: state.content.trim(), 
         tags: state.tags, 
         images: state.images,
-        imagesLength: state.images.length 
+        imagesLength: state.images.length,
+        imagesData: state.images.map(img => img.substring(0, 50) + '...')
       });
+      
+      // 少し待機してから保存処理を実行
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       if (mode === 'edit' && memo) {
         const updateData = {
@@ -60,8 +65,14 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
           images: state.images,
         };
         console.log('更新データ:', updateData);
+        console.log('更新データの画像数:', updateData.images.length);
+        
         updateMemoStorage(memo.id, updateData);
-        navigate('/');
+        
+        // 保存が完了するまで少し待機
+        await new Promise(resolve => setTimeout(resolve, 200));
+        console.log('=== 更新完了、画面遷移 ===');
+        
       } else {
         const createData = {
           title: state.title.trim(),
@@ -70,10 +81,17 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
           images: state.images,
         };
         console.log('作成データ:', createData);
+        console.log('作成データの画像数:', createData.images.length);
+        
         const result = addMemo(createData);
         console.log('作成結果:', result);
-        navigate('/');
+        
+        // 保存が完了するまで少し待機
+        await new Promise(resolve => setTimeout(resolve, 200));
+        console.log('=== 作成完了、画面遷移 ===');
       }
+      
+      navigate('/');
     } catch (error) {
       console.error('保存中にエラーが発生しました:', error);
       setError('保存中にエラーが発生しました');

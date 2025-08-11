@@ -14,7 +14,15 @@ export const useMemoStorage = () => {
     try {
       const savedMemos = localStorage.getItem(STORAGE_KEY);
       if (savedMemos) {
-        setMemos(JSON.parse(savedMemos));
+        const parsedMemos = JSON.parse(savedMemos);
+        console.log('ローカルストレージから読み込んだメモ:', parsedMemos);
+        // 既存メモでimagesプロパティがない場合は空配列を設定
+        const memosWithImages = parsedMemos.map((memo: any) => ({
+          ...memo,
+          images: memo.images || []
+        }));
+        console.log('画像プロパティを追加したメモ:', memosWithImages);
+        setMemos(memosWithImages);
       }
     } catch (e) {
       console.error('Failed to load memos from localStorage', e);
@@ -25,10 +33,49 @@ export const useMemoStorage = () => {
 
   // メモを保存する関数
   const saveMemos = (updatedMemos: Memo[]) => {
+    console.log('=== saveMemos開始 ===');
+    console.log('保存するメモの数:', updatedMemos.length);
+    console.log('保存するメモの画像データ:', updatedMemos.map(memo => ({
+      id: memo.id,
+      title: memo.title,
+      imagesCount: memo.images?.length || 0
+    })));
+    
     setMemos(updatedMemos);
+    
     if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMemos));
+      try {
+        const jsonString = JSON.stringify(updatedMemos);
+        const sizeInMB = (jsonString.length / 1024 / 1024).toFixed(2);
+        console.log('localStorage保存前のデータサイズ:', `${sizeInMB}MB`);
+        
+        // 5MBに近づいている場合は警告
+        if (jsonString.length > 4 * 1024 * 1024) { // 4MB
+          console.warn('⚠️ ローカルストレージの使用量が4MBを超えています。容量不足の可能性があります。');
+        }
+        
+        localStorage.setItem(STORAGE_KEY, jsonString);
+        
+        // 保存確認
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          console.log('localStorage保存後確認:', parsed.map((memo: any) => ({
+            id: memo.id,
+            title: memo.title,
+            imagesCount: memo.images?.length || 0
+          })));
+        }
+      } catch (error) {
+        console.error('localStorage保存エラー:', error);
+        if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+          alert('画像のサイズが大きすぎるため、保存できませんでした。画像のサイズを小さくするか、枚数を減らしてください。');
+        }
+        throw error;
+      }
     }
+    
+    console.log('=== saveMemos完了 ===');
   };
 
   // メモを追加
@@ -52,7 +99,16 @@ export const useMemoStorage = () => {
 
   // メモを更新
   const updateMemo = (id: string, updates: Partial<Omit<Memo, 'id' | 'createdAt'>>) => {
+    console.log('=== updateMemo開始 ===');
     console.log('updateMemo受信データ:', { id, updates });
+    console.log('受信した画像データ:', updates.images?.length || 0, '枚');
+    
+    const targetMemo = memos.find(memo => memo.id === id);
+    if (!targetMemo) {
+      console.error('対象のメモが見つかりません:', id);
+      return;
+    }
+    
     const updatedMemos = memos.map(memo => {
       if (memo.id === id) {
         const updatedMemo = { 
@@ -60,15 +116,24 @@ export const useMemoStorage = () => {
           ...updates, 
           updatedAt: new Date().toISOString() 
         };
-        console.log('更新前メモ:', memo);
-        console.log('更新後メモ:', updatedMemo);
+        console.log('更新前メモ:', {
+          ...memo,
+          images: memo.images?.length || 0
+        });
+        console.log('更新後メモ:', {
+          ...updatedMemo,
+          images: updatedMemo.images?.length || 0
+        });
+        console.log('更新後の実際の画像データ:', updatedMemo.images);
         return updatedMemo;
       }
       return memo;
     });
     
+    console.log('saveMemos実行前');
     saveMemos(updatedMemos);
-    console.log('保存後のメモ一覧:', updatedMemos);
+    console.log('saveMemos実行後');
+    console.log('=== updateMemo完了 ===');
   };
 
   // メモを削除
