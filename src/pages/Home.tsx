@@ -172,6 +172,72 @@ function Home() {
         <div className="grid-responsive">
           {filteredMemos.map((memo) => (
             <div key={memo.id} className="card" style={{ padding: '1.5rem' }}>
+              {/* Images Preview */}
+              {memo.images && memo.images.length > 0 && (
+                <div style={{ marginBottom: '1rem' }}>
+                  {memo.images.length === 1 ? (
+                    // Single image
+                    <div style={{ position: 'relative' }}>
+                      <img
+                        src={memo.images[0]}
+                        alt={memo.title}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'cover',
+                          borderRadius: '6px',
+                          border: '1px solid var(--border)'
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    // Multiple images
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: memo.images.length === 2 ? '1fr 1fr' : 'repeat(2, 1fr)',
+                      gap: '0.5rem',
+                      position: 'relative'
+                    }}>
+                      {memo.images.slice(0, 4).map((image, index) => (
+                        <div key={index} style={{ position: 'relative' }}>
+                          <img
+                            src={image}
+                            alt={`${memo.title} - 画像 ${index + 1}`}
+                            style={{
+                              width: '100%',
+                              height: memo.images.length === 2 ? '150px' : '100px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                              border: '1px solid var(--border)'
+                            }}
+                          />
+                          {/* Show "+X more" overlay for 4th image if there are more */}
+                          {index === 3 && memo.images.length > 4 && (
+                            <div style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: 'rgba(0, 0, 0, 0.6)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontSize: '0.875rem',
+                              fontWeight: '500',
+                              borderRadius: '4px'
+                            }}>
+                              +{memo.images.length - 4}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
               {/* Memo Header */}
               <div style={{ marginBottom: '1rem' }}>
                 <h3 style={{

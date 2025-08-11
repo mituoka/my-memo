@@ -251,14 +251,14 @@ export function MemoForm({
         {images.length > 0 && (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-            gap: '0.75rem',
-            marginTop: '0.75rem'
+            gridTemplateColumns: images.length === 1 ? '1fr' : images.length === 2 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+            gap: '1rem',
+            marginTop: '1rem'
           }}>
             {images.map((image, index) => (
               <div 
                 key={index} 
-                style={{ position: 'relative', borderRadius: '4px', overflow: 'hidden' }}
+                style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}
                 onMouseEnter={(e) => {
                   const button = e.currentTarget.querySelector('button');
                   if (button) (button as HTMLElement).style.opacity = '1';
@@ -273,10 +273,11 @@ export function MemoForm({
                   alt={`Upload ${index + 1}`}
                   style={{
                     width: '100%',
-                    height: '96px',
+                    height: images.length === 1 ? '300px' : images.length === 2 ? '200px' : '150px',
                     objectFit: 'cover',
                     border: '1px solid var(--border)',
-                    borderRadius: '4px'
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                   }}
                 />
                 <button
@@ -284,21 +285,22 @@ export function MemoForm({
                   onClick={() => onImageRemove(index)}
                   style={{
                     position: 'absolute',
-                    top: '4px',
-                    right: '4px',
+                    top: '8px',
+                    right: '8px',
                     background: 'var(--error, #ef4444)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '50%',
-                    width: '20px',
-                    height: '20px',
+                    width: '28px',
+                    height: '28px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '12px',
+                    fontSize: '16px',
                     cursor: 'pointer',
                     opacity: 0,
-                    transition: 'opacity 0.2s'
+                    transition: 'opacity 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                   }}
                 >
                   ×
