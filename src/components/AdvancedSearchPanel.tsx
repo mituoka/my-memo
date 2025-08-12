@@ -37,10 +37,6 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     onDateRangeChange(startDate, endDate);
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    return new Date(dateString).toISOString().split('T')[0];
-  };
 
   return (
     <div style={{
