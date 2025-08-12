@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MemoForm, useMemoForm } from './MemoForm';
 import { useMemoStorage } from '../hooks/useMemoStorage';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import type { MemoEditorProps } from '@/types';
 
 export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
@@ -82,6 +83,19 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
   const handleCancel = () => {
     navigate('/');
   };
+
+  useKeyboardShortcuts({
+    onSave: () => {
+      if (!isSaving) {
+        const event = new Event('submit', { bubbles: true, cancelable: true });
+        const form = document.querySelector('form');
+        if (form) {
+          form.dispatchEvent(event);
+        }
+      }
+    },
+    onCancel: handleCancel
+  });
 
   return (
     <MemoForm
