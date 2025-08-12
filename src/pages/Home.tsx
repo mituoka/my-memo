@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
+import { useMemoSort } from '../hooks/useMemoSort';
+import { SortControls } from '../components/SortControls';
 
 function Home() {
   const { memos, isLoaded, deleteMemo } = useMemoStorage();
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const { sortedMemos, sortSettings, updateSort, getSortLabel } = useMemoSort(memos);
 
-  // フィルタリングされたメモ
-  const filteredMemos = memos.filter(memo =>
+  const filteredMemos = sortedMemos.filter(memo =>
     memo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     memo.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
     memo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -80,7 +83,7 @@ function Home() {
         
         {/* Search Bar */}
         {memos.length > 0 && (
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', marginBottom: '1rem' }}>
             <input
               type="text"
               placeholder="メモを検索..."
@@ -108,6 +111,15 @@ function Home() {
               <path d="m21 21-4.35-4.35"></path>
             </svg>
           </div>
+        )}
+        
+        {/* Sort Controls */}
+        {memos.length > 0 && (
+          <SortControls
+            sortSettings={sortSettings}
+            onSort={updateSort}
+            getSortLabel={getSortLabel}
+          />
         )}
       </div>
 

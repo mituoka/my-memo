@@ -76,3 +76,12 @@ export interface ApiError {
   readonly message: string;
   readonly status?: number;
 }
+
+// ソート関連の型
+export type SortField = 'createdAt' | 'updatedAt' | 'title';
+export type SortOrder = 'asc' | 'desc';
+
+export interface SortSettings {
+  readonly field: SortField;
+  readonly order: SortOrder;
+}
