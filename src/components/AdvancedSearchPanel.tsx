@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { SearchFilters } from '../hooks/useAdvancedSearch';
+import type { SortSettings, SortField } from '@/types';
 
 interface AdvancedSearchPanelProps {
   readonly filters: SearchFilters;
@@ -10,6 +11,9 @@ interface AdvancedSearchPanelProps {
   readonly onDateRangeChange: (start: string, end: string) => void;
   readonly onClearFilters: () => void;
   readonly hasActiveFilters: boolean;
+  readonly sortSettings: SortSettings;
+  readonly onSort: (field: SortField) => void;
+  readonly getSortLabel: (field: SortField) => string;
 }
 
 export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
@@ -20,7 +24,10 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   onImageFilterChange,
   onDateRangeChange,
   onClearFilters,
-  hasActiveFilters
+  hasActiveFilters,
+  sortSettings,
+  onSort,
+  getSortLabel
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [startDate, setStartDate] = useState(filters.dateRange?.start || '');
@@ -76,49 +83,143 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'flex-start',
+          gap: '1rem',
+          flexWrap: 'wrap'
         }}>
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            style={{
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            flexWrap: 'wrap'
+          }}>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 0.75rem',
+                fontSize: '0.875rem',
+                border: '1px solid var(--border)',
+                borderRadius: '6px',
+                background: 'var(--background)',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--surface-hover)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--background)';
+              }}
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d={isExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
+              </svg>
+              詳細検索
+              {hasActiveFilters && !isExpanded && (
+                <span style={{
+                  background: 'var(--primary)',
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  padding: '0.125rem 0.375rem',
+                  borderRadius: '10px',
+                  minWidth: '1rem',
+                  textAlign: 'center'
+                }}>
+                  ●
+                </span>
+              )}
+            </button>
+
+            {/* Sort Controls */}
+            <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              padding: '0.5rem 0.75rem',
-              fontSize: '0.875rem',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
-              background: 'var(--background)',
-              color: 'var(--text-primary)',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--surface-hover)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--background)';
-            }}
-          >
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                d={isExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
-            </svg>
-            詳細検索
-            {hasActiveFilters && !isExpanded && (
+              flexWrap: 'wrap'
+            }}>
               <span style={{
-                background: 'var(--primary)',
-                color: 'white',
-                fontSize: '0.75rem',
-                padding: '0.125rem 0.375rem',
-                borderRadius: '10px',
-                minWidth: '1rem',
-                textAlign: 'center'
+                fontSize: '0.875rem',
+                color: 'var(--text-secondary)',
+                fontWeight: '500'
               }}>
-                ●
+                並び替え:
               </span>
-            )}
-          </button>
+              {['updatedAt', 'createdAt', 'title'].map(field => {
+                const sortField = field as SortField;
+                const getSortIcon = (field: SortField) => {
+                  const iconStyle = {
+                    width: '16px',
+                    height: '16px',
+                    flexShrink: 0
+                  };
+
+                  if (sortSettings.field !== field) {
+                    return (
+                      <svg style={{ ...iconStyle, opacity: 0.3 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    );
+                  }
+
+                  if (sortSettings.order === 'asc') {
+                    return (
+                      <svg style={iconStyle} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    );
+                  }
+
+                  return (
+                    <svg style={iconStyle} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  );
+                };
+
+                return (
+                  <button
+                    key={field}
+                    onClick={() => onSort(sortField)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      background: sortSettings.field === sortField ? 'var(--primary)' : 'var(--surface)',
+                      color: sortSettings.field === sortField ? 'white' : 'var(--text-primary)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      whiteSpace: 'nowrap',
+                      minHeight: '36px'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (sortSettings.field !== sortField) {
+                        e.currentTarget.style.background = 'var(--surface-hover)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (sortSettings.field !== sortField) {
+                        e.currentTarget.style.background = 'var(--surface)';
+                      }
+                    }}
+                  >
+                    <span style={{ lineHeight: 1 }}>{getSortLabel(sortField)}</span>
+                    {getSortIcon(sortField)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {hasActiveFilters && (
             <button

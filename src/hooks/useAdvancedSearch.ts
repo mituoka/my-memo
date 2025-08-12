@@ -101,11 +101,12 @@ export const useAdvancedSearch = (memos: readonly Memo[]) => {
     setFilters(DEFAULT_FILTERS);
   };
 
-  const hasActiveFilters = 
+  const hasActiveFilters = Boolean(
     filters.searchTerm ||
     filters.selectedTags.length > 0 ||
     filters.hasImages !== null ||
-    filters.dateRange;
+    filters.dateRange
+  );
 
   return {
     filters,

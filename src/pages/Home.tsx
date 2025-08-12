@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useMemoSort } from '../hooks/useMemoSort';
 import { useAdvancedSearch } from '../hooks/useAdvancedSearch';
-import { SortControls } from '../components/SortControls';
 import { AdvancedSearchPanel } from '../components/AdvancedSearchPanel';
 
 function Home() {
@@ -90,27 +89,23 @@ function Home() {
           )}
         </div>
         
-        {/* Advanced Search Panel */}
+        {/* Search and Sort Controls */}
         {memos.length > 0 && (
-          <AdvancedSearchPanel
-            filters={filters}
-            allTags={allTags}
-            onSearchTermChange={updateSearchTerm}
-            onToggleTag={toggleTag}
-            onImageFilterChange={setImageFilter}
-            onDateRangeChange={setDateRange}
-            onClearFilters={clearFilters}
-            hasActiveFilters={hasActiveFilters}
-          />
-        )}
-        
-        {/* Sort Controls */}
-        {memos.length > 0 && (
-          <SortControls
-            sortSettings={sortSettings}
-            onSort={updateSort}
-            getSortLabel={getSortLabel}
-          />
+          <div>
+            <AdvancedSearchPanel
+              filters={filters}
+              allTags={allTags}
+              onSearchTermChange={updateSearchTerm}
+              onToggleTag={toggleTag}
+              onImageFilterChange={setImageFilter}
+              onDateRangeChange={setDateRange}
+              onClearFilters={clearFilters}
+              hasActiveFilters={hasActiveFilters}
+              sortSettings={sortSettings}
+              onSort={updateSort}
+              getSortLabel={getSortLabel}
+            />
+          </div>
         )}
       </div>
 
@@ -222,7 +217,7 @@ function Home() {
                     // Multiple images
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: memo.images.length === 2 ? '1fr 1fr' : 'repeat(2, 1fr)',
+                      gridTemplateColumns: (memo.images?.length || 0) === 2 ? '1fr 1fr' : 'repeat(2, 1fr)',
                       gap: '0.5rem',
                       position: 'relative'
                     }}>
@@ -233,14 +228,14 @@ function Home() {
                             alt={`${memo.title} - 画像 ${index + 1}`}
                             style={{
                               width: '100%',
-                              height: memo.images.length === 2 ? '150px' : '100px',
+                              height: (memo.images?.length || 0) === 2 ? '150px' : '100px',
                               objectFit: 'cover',
                               borderRadius: '4px',
                               border: '1px solid var(--border)'
                             }}
                           />
                           {/* Show "+X more" overlay for 4th image if there are more */}
-                          {index === 3 && memo.images.length > 4 && (
+                          {index === 3 && (memo.images?.length || 0) > 4 && (
                             <div style={{
                               position: 'absolute',
                               top: 0,
@@ -256,7 +251,7 @@ function Home() {
                               fontWeight: '500',
                               borderRadius: '4px'
                             }}>
-                              +{memo.images.length - 4}
+                              +{(memo.images?.length || 0) - 4}
                             </div>
                           )}
                         </div>
