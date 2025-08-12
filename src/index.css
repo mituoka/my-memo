@@ -2,6 +2,7 @@
 :root {
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
   --secondary: #64748b;
   --background: #fafbfc;
   --surface: #ffffff;
@@ -22,6 +23,7 @@
 [data-theme="dark"] {
   --primary: #3b82f6;
   --primary-hover: #2563eb;
+  --primary-light: #1e3a8a;
   --secondary: #9ca3af;
   --background: #0f172a;
   --surface: #1e293b;
@@ -58,6 +60,29 @@ body {
   letter-spacing: 0.02em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Typography */

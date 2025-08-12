@@ -115,50 +115,201 @@ function Home() {
         <div className="card" style={{ 
           padding: '3rem 2rem', 
           textAlign: 'center',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+          background: 'linear-gradient(135deg, var(--surface) 0%, var(--background) 100%)',
+          border: '2px dashed var(--border)',
+          maxWidth: '600px',
+          margin: '0 auto'
         }}>
+          {/* メインアイコン */}
           <div style={{
-            width: '64px',
-            height: '64px',
-            background: 'var(--primary)',
+            width: '80px',
+            height: '80px',
+            background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 1.5rem auto',
-            opacity: 0.8
+            margin: '0 auto 2rem auto',
+            boxShadow: 'var(--shadow-lg)',
+            position: 'relative'
           }}>
             <svg 
-              width="28" 
-              height="28" 
+              width="36" 
+              height="36" 
               fill="none" 
               stroke="white" 
               viewBox="0 0 24 24"
               strokeWidth="1.5"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             </svg>
+            
+            {/* キラキラエフェクト */}
+            <div style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '8px',
+              width: '16px',
+              height: '16px',
+              background: '#fbbf24',
+              borderRadius: '50%',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}>✨</div>
           </div>
           
-          <h3 style={{ 
-            fontSize: '1.25rem', 
-            fontWeight: '600', 
-            margin: '0 0 0.5rem 0',
-            color: 'var(--text-primary)'
+          <h2 style={{ 
+            fontSize: '1.75rem', 
+            fontWeight: '700', 
+            margin: '0 0 1rem 0',
+            color: 'var(--text-primary)',
+            lineHeight: '1.3'
           }}>
-            📝 メモを作成して始めましょう
-          </h3>
+            あなたの思考を<br />整理しませんか？
+          </h2>
           
-          <p className="text-secondary" style={{ 
-            margin: '0 0 1.5rem 0',
-            fontSize: '0.9375rem'
+          <p style={{ 
+            margin: '0 0 2rem 0',
+            fontSize: '1rem',
+            color: 'var(--text-secondary)',
+            lineHeight: '1.6',
+            maxWidth: '400px',
+            marginLeft: 'auto',
+            marginRight: 'auto'
           }}>
-            思考、アイデア、タスクを整理して管理できます
+            アイデア、思考、タスクを一箇所で管理。<br />
+            タグで分類、検索で素早く見つけて、<br />
+            生産性を向上させましょう。
           </p>
-          
-          <Link to="/memo/new" className="btn btn-primary">
-            最初のメモを作成
-          </Link>
+
+          {/* 機能リスト */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '2rem',
+            margin: '2rem 0',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ textAlign: 'center', minWidth: '100px' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                background: 'var(--primary-light)',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 0.5rem auto'
+              }}>
+                💡
+              </div>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                アイデア
+              </p>
+            </div>
+            
+            <div style={{ textAlign: 'center', minWidth: '100px' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                background: 'var(--primary-light)',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 0.5rem auto'
+              }}>
+                🧠
+              </div>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                思考整理
+              </p>
+            </div>
+            
+            <div style={{ textAlign: 'center', minWidth: '100px' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                background: 'var(--primary-light)',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 0.5rem auto'
+              }}>
+                ✅
+              </div>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                タスク管理
+              </p>
+            </div>
+          </div>
+
+          {/* アクションボタン */}
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginTop: '2rem'
+          }}>
+            <Link 
+              to="/memo/new" 
+              className="btn btn-primary"
+              style={{
+                padding: '1rem 2rem',
+                fontSize: '1rem',
+                fontWeight: '600',
+                borderRadius: '12px',
+                boxShadow: 'var(--shadow-lg)',
+                transform: 'translateY(0)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+              }}
+            >
+              📝 最初のメモを作成
+            </Link>
+          </div>
+
+          {/* ヒント */}
+          <div style={{
+            marginTop: '3rem',
+            padding: '1.5rem',
+            background: 'var(--primary-light)',
+            borderRadius: '12px',
+            border: `1px solid var(--border)`,
+            textAlign: 'left'
+          }}>
+            <h4 style={{
+              margin: '0 0 1rem 0',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: 'var(--text-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              💡 使い方のヒント
+            </h4>
+            <ul style={{
+              margin: 0,
+              paddingLeft: '1.25rem',
+              fontSize: '0.8125rem',
+              color: 'var(--text-secondary)',
+              lineHeight: '1.5'
+            }}>
+              <li>テキストや画像を追加してメモを作成</li>
+              <li>タグを付けて分類・整理</li>
+              <li>検索機能で素早く目的のメモを発見</li>
+              <li>ピン留めで重要なメモを上部に固定</li>
+            </ul>
+          </div>
         </div>
       ) : filteredMemos.length === 0 ? (
         // No Search Results
