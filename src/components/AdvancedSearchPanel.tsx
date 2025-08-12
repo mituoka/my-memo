@@ -76,18 +76,18 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
           </svg>
         </div>
 
+        {/* モバイル対応のレスポンシブレイアウト */}
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          gap: '1rem',
-          flexWrap: 'wrap'
+          flexDirection: 'column',
+          gap: '0.75rem'
         }}>
+          {/* 詳細検索ボタンとクリアボタン */}
           <div style={{
             display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '0.5rem',
-            flexWrap: 'wrap'
+            gap: '0.5rem'
           }}>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
@@ -102,7 +102,8 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                 background: 'var(--background)',
                 color: 'var(--text-primary)',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                flexShrink: 0
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'var(--surface-hover)';
@@ -131,26 +132,60 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               )}
             </button>
 
-            {/* Sort Controls */}
+            {hasActiveFilters && (
+              <button
+                onClick={onClearFilters}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid var(--error)',
+                  borderRadius: '6px',
+                  background: 'none',
+                  color: 'var(--error)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  flexShrink: 0
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--error)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'none';
+                  e.currentTarget.style.color = 'var(--error)';
+                }}
+              >
+                クリア
+              </button>
+            )}
+          </div>
+
+          {/* 並び替えコントロール（別行） */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            flexWrap: 'wrap'
+          }}>
+            <span style={{
+              fontSize: '0.875rem',
+              color: 'var(--text-secondary)',
+              fontWeight: '500',
+              flexShrink: 0
+            }}>
+              並び替え:
+            </span>
             <div style={{
               display: 'flex',
-              alignItems: 'center',
               gap: '0.5rem',
               flexWrap: 'wrap'
             }}>
-              <span style={{
-                fontSize: '0.875rem',
-                color: 'var(--text-secondary)',
-                fontWeight: '500'
-              }}>
-                並び替え:
-              </span>
               {['updatedAt', 'createdAt', 'title'].map(field => {
                 const sortField = field as SortField;
                 const getSortIcon = (field: SortField) => {
                   const iconStyle = {
-                    width: '16px',
-                    height: '16px',
+                    width: '14px',
+                    height: '14px',
                     flexShrink: 0
                   };
 
@@ -185,9 +220,9 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '0.5rem',
-                      padding: '0.5rem 0.75rem',
-                      fontSize: '0.875rem',
+                      gap: '0.375rem',
+                      padding: '0.375rem 0.625rem',
+                      fontSize: '0.8125rem',
                       fontWeight: '500',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
@@ -196,7 +231,7 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       whiteSpace: 'nowrap',
-                      minHeight: '36px'
+                      minHeight: '32px'
                     }}
                     onMouseEnter={(e) => {
                       if (sortSettings.field !== sortField) {
@@ -216,32 +251,6 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               })}
             </div>
           </div>
-
-          {hasActiveFilters && (
-            <button
-              onClick={onClearFilters}
-              style={{
-                padding: '0.5rem 0.75rem',
-                fontSize: '0.875rem',
-                border: '1px solid var(--error)',
-                borderRadius: '6px',
-                background: 'none',
-                color: 'var(--error)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--error)';
-                e.currentTarget.style.color = 'white';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'none';
-                e.currentTarget.style.color = 'var(--error)';
-              }}
-            >
-              フィルターをクリア
-            </button>
-          )}
         </div>
       </div>
 
