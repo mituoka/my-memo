@@ -16,7 +16,8 @@ export const useMemoStorage = () => {
         const parsedMemos = JSON.parse(savedMemos);
         const memosWithImages = parsedMemos.map((memo: any) => ({
           ...memo,
-          images: memo.images || []
+          images: memo.images || [],
+          isPinned: memo.isPinned || false
         }));
         setMemos(memosWithImages);
       }
@@ -57,6 +58,7 @@ export const useMemoStorage = () => {
       createdAt: now,
       updatedAt: now,
       images: memo.images || [],
+      isPinned: false,
     };
     
     const updatedMemos = [...memos, newMemo];
@@ -121,6 +123,20 @@ export const useMemoStorage = () => {
     saveMemos([]);
   };
 
+  const togglePinMemo = (id: string) => {
+    const updatedMemos = memos.map(memo => {
+      if (memo.id === id) {
+        return {
+          ...memo,
+          isPinned: !memo.isPinned,
+          updatedAt: new Date().toISOString()
+        };
+      }
+      return memo;
+    });
+    saveMemos(updatedMemos);
+  };
+
   return {
     memos,
     isLoaded,
@@ -130,6 +146,7 @@ export const useMemoStorage = () => {
     getMemo,
     getAllTags,
     importMemos,
-    clearAllMemos
+    clearAllMemos,
+    togglePinMemo
   };
 };

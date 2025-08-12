@@ -13,6 +13,7 @@ export interface Memo {
   readonly images?: readonly string[];
   readonly createdAt: string;
   readonly updatedAt: string;
+  readonly isPinned?: boolean;
 }
 
 // API用のMemo型（後方互換性のため保持）

@@ -5,7 +5,7 @@ import { useMemoSort } from '../hooks/useMemoSort';
 import { SortControls } from '../components/SortControls';
 
 function Home() {
-  const { memos, isLoaded, deleteMemo } = useMemoStorage();
+  const { memos, isLoaded, deleteMemo, togglePinMemo } = useMemoStorage();
   const [searchTerm, setSearchTerm] = useState('');
   
   const { sortedMemos, sortSettings, updateSort, getSortLabel } = useMemoSort(memos);
@@ -183,7 +183,11 @@ function Home() {
         // Memo Grid
         <div className="grid-responsive">
           {filteredMemos.map((memo) => (
-            <div key={memo.id} className="card" style={{ padding: '1.5rem' }}>
+            <div key={memo.id} className="card" style={{ 
+              padding: '1.5rem',
+              border: memo.isPinned ? '2px solid var(--primary)' : '1px solid var(--border)',
+              background: memo.isPinned ? 'var(--primary-light)' : 'var(--surface)'
+            }}>
               {/* Images Preview */}
               {memo.images && memo.images.length > 0 && (
                 <div style={{ marginBottom: '1rem' }}>
@@ -252,16 +256,53 @@ function Home() {
               
               {/* Memo Header */}
               <div style={{ marginBottom: '1rem' }}>
-                <h3 style={{
-                  fontSize: '1.125rem',
-                  fontWeight: '600',
-                  margin: '0 0 0.5rem 0',
-                  color: 'var(--text-primary)',
-                  lineHeight: '1.5',
-                  wordBreak: 'break-word'
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'flex-start',
+                  marginBottom: '0.5rem'
                 }}>
-                  {memo.title}
-                </h3>
+                  <h3 style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '600',
+                    margin: 0,
+                    color: 'var(--text-primary)',
+                    lineHeight: '1.5',
+                    wordBreak: 'break-word',
+                    flex: 1
+                  }}>
+                    {memo.title}
+                  </h3>
+                  
+                  <button
+                    onClick={() => togglePinMemo(memo.id)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '0.25rem',
+                      marginLeft: '0.5rem',
+                      borderRadius: '4px',
+                      color: memo.isPinned ? 'var(--primary)' : 'var(--text-muted)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'var(--surface-hover)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'none';
+                    }}
+                    title={memo.isPinned ? 'ピン留めを解除' : 'ピン留めする'}
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                      {memo.isPinned ? (
+                        <path d="M14 4v3c0 1.103.897 2 2 2h3v2c0 1.103-.897 2-2 2h-3v7l-2-2-2 2v-7H7c-1.103 0-2-.897-2-2V9h3c1.103 0 2-.897 2-2V4h4z"/>
+                      ) : (
+                        <path d="M12 2l3.09 6.26L22 9l-5 4.87L18.18 22 12 18.77 5.82 22 7 13.87 2 9l6.91-.74L12 2zm0 4.25L10.5 9.5 8 9.25l2 1.75-.5 2.5 2.5-1.5 2.5 1.5-.5-2.5 2-1.75-2.5.25L12 6.25z"/>
+                      )}
+                    </svg>
+                  </button>
+                </div>
                 
                 {memo.content && (
                   <p 
@@ -376,6 +417,11 @@ function Home() {
         }}>
           <span className="text-muted" style={{ fontSize: '0.875rem' }}>
             総メモ数: {memos.length}
+            {memos.filter(m => m.isPinned).length > 0 && (
+              <span style={{ marginLeft: '1rem' }}>
+                ピン留め: {memos.filter(m => m.isPinned).length}
+              </span>
+            )}
             {searchTerm && filteredMemos.length !== memos.length && (
               <span style={{ marginLeft: '1rem' }}>
                 表示中: {filteredMemos.length}

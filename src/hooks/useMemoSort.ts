@@ -29,6 +29,10 @@ export const useMemoSort = (memos: readonly Memo[]) => {
 
   const sortedMemos = useMemo(() => {
     const sorted = [...memos].sort((a, b) => {
+      // ピン留めメモを最優先
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      
       let comparison = 0;
       
       switch (sortSettings.field) {
