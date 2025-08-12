@@ -20,7 +20,6 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
     images: memo?.images || [],
   });
 
-  // メモデータが変更された場合、フォームを更新
   useEffect(() => {
     if (memo && mode === 'edit') {
       actions.reset({
@@ -44,17 +43,6 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
     setError(null);
     
     try {
-      console.log('=== 保存処理開始 ===');
-      console.log('保存前のstate:', { 
-        title: state.title.trim(), 
-        content: state.content.trim(), 
-        tags: state.tags, 
-        images: state.images,
-        imagesLength: state.images.length,
-        imagesData: state.images.map(img => img.substring(0, 50) + '...')
-      });
-      
-      // 少し待機してから保存処理を実行
       await new Promise(resolve => setTimeout(resolve, 100));
       
       if (mode === 'edit' && memo) {
@@ -64,14 +52,10 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
           tags: state.tags,
           images: state.images,
         };
-        console.log('更新データ:', updateData);
-        console.log('更新データの画像数:', updateData.images.length);
         
         updateMemoStorage(memo.id, updateData);
         
-        // 保存が完了するまで少し待機
         await new Promise(resolve => setTimeout(resolve, 200));
-        console.log('=== 更新完了、画面遷移 ===');
         
       } else {
         const createData = {
@@ -80,15 +64,10 @@ export default function MemoEditor({ memo, mode }: Readonly<MemoEditorProps>) {
           tags: state.tags,
           images: state.images,
         };
-        console.log('作成データ:', createData);
-        console.log('作成データの画像数:', createData.images.length);
         
-        const result = addMemo(createData);
-        console.log('作成結果:', result);
+        addMemo(createData);
         
-        // 保存が完了するまで少し待機
         await new Promise(resolve => setTimeout(resolve, 200));
-        console.log('=== 作成完了、画面遷移 ===');
       }
       
       navigate('/');

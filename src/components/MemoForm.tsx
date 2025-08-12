@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react';
 import type { MemoFormState, ApiError } from '@/types';
 
-// エラーメッセージを取得するヘルパー関数
 const getErrorMessage = (error: ApiError | string | null | undefined): string => {
   if (!error) return '';
   if (typeof error === 'string') return error;
@@ -11,7 +10,6 @@ const getErrorMessage = (error: ApiError | string | null | undefined): string =>
   return 'エラーが発生しました';
 };
 
-// フォームコンポーネントの属性型
 interface MemoFormProps {
   readonly title: string;
   readonly onTitleChange: (title: string) => void;
@@ -31,7 +29,6 @@ interface MemoFormProps {
   readonly error: ApiError | string | null | undefined;
 }
 
-// 再利用可能なフォームコンポーネント
 export function MemoForm({
   title,
   onTitleChange,
@@ -227,19 +224,15 @@ export function MemoForm({
           accept="image/*"
           onChange={(e) => {
             const files = Array.from(e.target.files || []);
-            console.log('選択されたファイル数:', files.length);
             
             const imagePromises = files.map((file, index) => {
-              console.log(`ファイル${index + 1}:`, file.name, file.type, file.size);
               return new Promise<string>((resolve) => {
-                // 画像をリサイズ・圧縮する関数
                 const resizeAndCompress = (file: File) => {
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d')!;
                   const img = new Image();
                   
                   img.onload = () => {
-                    // 最大サイズを800pxに設定（アスペクト比を維持）
                     const MAX_WIDTH = 800;
                     const MAX_HEIGHT = 800;
                     
@@ -260,19 +253,13 @@ export function MemoForm({
                     canvas.width = width;
                     canvas.height = height;
                     
-                    // 画像を描画
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // 圧縮（品質0.8で約80%の品質）
                     const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                    console.log(`ファイル${index + 1} 圧縮完了:`, 
-                      `元サイズ: ${file.size} bytes`, 
-                      `圧縮後サイズ: ${Math.round(compressedDataUrl.length * 0.75)} bytes`);
                     
                     resolve(compressedDataUrl);
                   };
                   
-                  // Fileオブジェクトを画像として読み込み
                   const reader = new FileReader();
                   reader.onload = (e) => {
                     img.src = e.target?.result as string;
@@ -285,7 +272,6 @@ export function MemoForm({
             });
             
             Promise.all(imagePromises).then((results) => {
-              console.log('全ファイル処理完了:', results.length);
               onImageAdd(results);
             });
           }}
@@ -398,7 +384,6 @@ export function MemoForm({
   );
 }
 
-// フォーム状態とロジックを管理するカスタムフック
 export const useMemoForm = (initialState?: Partial<MemoFormState>) => {
   const [state, setState] = useState<MemoFormState>({
     title: initialState?.title || '',
@@ -439,15 +424,10 @@ export const useMemoForm = (initialState?: Partial<MemoFormState>) => {
   }, []);
 
   const addImages = useCallback((newImages: string[]) => {
-    console.log('画像を追加:', newImages.length + '枚');
-    setState(prev => {
-      const updatedState = {
-        ...prev,
-        images: [...prev.images, ...newImages],
-      };
-      console.log('更新後のstate:', updatedState);
-      return updatedState;
-    });
+    setState(prev => ({
+      ...prev,
+      images: [...prev.images, ...newImages],
+    }));
   }, []);
 
   const removeImage = useCallback((index: number) => {
