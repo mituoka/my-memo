@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Background -->
+  <rect width="192" height="192" rx="32" fill="#3b82f6"/>
+  
+  <!-- Memo pad -->
+  <rect x="48" y="36" width="96" height="120" rx="8" fill="white"/>
+  
+  <!-- Binding holes -->
+  <circle cx="72" cy="52" r="3" fill="#e5e7eb"/>
+  <circle cx="120" cy="52" r="3" fill="#e5e7eb"/>
+  <circle cx="72" cy="140" r="3" fill="#e5e7eb"/>
+  <circle cx="120" cy="140" r="3" fill="#e5e7eb"/>
+  
+  <!-- Lines on memo -->
+  <rect x="60" y="72" width="48" height="3" fill="#3b82f6" opacity="0.2"/>
+  <rect x="60" y="84" width="72" height="3" fill="#3b82f6" opacity="0.2"/>
+  <rect x="60" y="96" width="60" height="3" fill="#3b82f6" opacity="0.2"/>
+  <rect x="60" y="108" width="54" height="3" fill="#3b82f6" opacity="0.2"/>
+  <rect x="60" y="120" width="36" height="3" fill="#3b82f6" opacity="0.2"/>
+  
+  <!-- Pen -->
+  <path d="M120 60l12 12-18 18-12-12z" fill="#f59e0b"/>
+  <path d="M102 78l12 12-24 24-12-12z" fill="#fbbf24"/>
+  <circle cx="126" cy="66" r="4" fill="#dc2626"/>
+</svg>
