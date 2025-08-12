@@ -2,19 +2,28 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useMemoSort } from '../hooks/useMemoSort';
+import { useAdvancedSearch } from '../hooks/useAdvancedSearch';
 import { SortControls } from '../components/SortControls';
+import { AdvancedSearchPanel } from '../components/AdvancedSearchPanel';
 
 function Home() {
   const { memos, isLoaded, deleteMemo, togglePinMemo } = useMemoStorage();
-  const [searchTerm, setSearchTerm] = useState('');
   
   const { sortedMemos, sortSettings, updateSort, getSortLabel } = useMemoSort(memos);
+  
+  const {
+    filters,
+    filteredMemos: searchFilteredMemos,
+    allTags,
+    updateSearchTerm,
+    toggleTag,
+    setImageFilter,
+    setDateRange,
+    clearFilters,
+    hasActiveFilters
+  } = useAdvancedSearch(sortedMemos);
 
-  const filteredMemos = sortedMemos.filter(memo =>
-    memo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    memo.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    memo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredMemos = searchFilteredMemos;
 
   const handleDelete = (id: string, title: string) => {
     if (window.confirm(`「${title}」を削除しますか？`)) {
@@ -81,36 +90,18 @@ function Home() {
           )}
         </div>
         
-        {/* Search Bar */}
+        {/* Advanced Search Panel */}
         {memos.length > 0 && (
-          <div style={{ position: 'relative', marginBottom: '1rem' }}>
-            <input
-              type="text"
-              placeholder="メモを検索..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="input"
-              style={{ paddingRight: '2.5rem' }}
-            />
-            <svg
-              style={{
-                position: 'absolute',
-                right: '0.75rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '16px',
-                height: '16px',
-                color: 'var(--text-muted)'
-              }}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </div>
+          <AdvancedSearchPanel
+            filters={filters}
+            allTags={allTags}
+            onSearchTermChange={updateSearchTerm}
+            onToggleTag={toggleTag}
+            onImageFilterChange={setImageFilter}
+            onDateRangeChange={setDateRange}
+            onClearFilters={clearFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
         )}
         
         {/* Sort Controls */}
@@ -177,7 +168,28 @@ function Home() {
       ) : filteredMemos.length === 0 ? (
         // No Search Results
         <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
-          <p className="text-secondary">「{searchTerm}」に一致するメモが見つかりません</p>
+          <p className="text-secondary">
+            {hasActiveFilters 
+              ? 'フィルター条件に一致するメモが見つかりません'
+              : `「${filters.searchTerm}」に一致するメモが見つかりません`
+            }
+          </p>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              style={{
+                marginTop: '1rem',
+                padding: '0.5rem 1rem',
+                border: '1px solid var(--primary)',
+                borderRadius: '6px',
+                background: 'var(--primary)',
+                color: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              フィルターをクリア
+            </button>
+          )}
         </div>
       ) : (
         // Memo Grid
@@ -422,7 +434,7 @@ function Home() {
                 ピン留め: {memos.filter(m => m.isPinned).length}
               </span>
             )}
-            {searchTerm && filteredMemos.length !== memos.length && (
+            {(hasActiveFilters || filters.searchTerm) && filteredMemos.length !== memos.length && (
               <span style={{ marginLeft: '1rem' }}>
                 表示中: {filteredMemos.length}
               </span>
