@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#3b82f6"/>
+  
+  <!-- Memo icon -->
+  <g transform="translate(100, 80)">
+    <!-- Paper -->
+    <rect x="0" y="0" width="312" height="352" rx="20" fill="white" stroke="#e5e7eb" stroke-width="4"/>
+    
+    <!-- Lines -->
+    <line x1="40" y1="80" x2="272" y2="80" stroke="#d1d5db" stroke-width="3"/>
+    <line x1="40" y1="120" x2="240" y2="120" stroke="#d1d5db" stroke-width="3"/>
+    <line x1="40" y1="160" x2="260" y2="160" stroke="#d1d5db" stroke-width="3"/>
+    <line x1="40" y1="200" x2="220" y2="200" stroke="#d1d5db" stroke-width="3"/>
+    
+    <!-- Pen -->
+    <g transform="translate(180, 140) rotate(15)">
+      <rect x="0" y="0" width="8" height="60" fill="#fbbf24"/>
+      <rect x="8" y="0" width="8" height="60" fill="#f59e0b"/>
+      <polygon points="0,60 16,60 8,75" fill="#374151"/>
+      <circle cx="8" cy="-10" r="6" fill="#9ca3af"/>
+    </g>
+  </g>
+</svg>

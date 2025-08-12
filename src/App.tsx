@@ -9,6 +9,7 @@ import NewMemo from './pages/NewMemo';
 import EditMemo from './pages/EditMemo';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { ShortcutsHelp } from './components/ShortcutsHelp';
+import { PWABanner } from './components/PWABanner';
 
 function App() {
   return (
@@ -62,6 +63,8 @@ function AppWithKeyboardShortcuts() {
         isOpen={isShortcutsHelpOpen}
         onClose={() => setIsShortcutsHelpOpen(false)}
       />
+      
+      <PWABanner />
     </>
   );
 }

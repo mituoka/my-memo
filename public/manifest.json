@@ -1,0 +1,68 @@
+{
+  "name": "My Memo App",
+  "short_name": "Memo App",
+  "description": "シンプルで使いやすいメモアプリ",
+  "start_url": "/my-memo",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "scope": "/my-memo/",
+  "lang": "ja",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/my-memo/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/my-memo/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/my-memo/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/my-memo/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/my-memo/screenshot-mobile.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/my-memo/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "新規メモ作成",
+      "short_name": "新規メモ",
+      "description": "新しいメモを作成します",
+      "url": "/my-memo/memo/new",
+      "icons": [
+        {
+          "src": "/my-memo/icon-shortcut-new.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}
