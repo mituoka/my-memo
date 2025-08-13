@@ -193,14 +193,19 @@ function Home() {
               <div style={{
                 width: '48px',
                 height: '48px',
-                background: 'var(--primary-light)',
+                background: 'var(--surface)',
+                border: '2px solid var(--border)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 0.5rem auto'
               }}>
-                💡
+                <svg width="24" height="24" fill="none" stroke="var(--text-secondary)" viewBox="0 0 24 24" strokeWidth="2">
+                  <path d="M9 21h6"></path>
+                  <path d="M9 18h6"></path>
+                  <path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.5 4.5-3 5.5v1.5h-8v-1.5c-1.5-1-3-3-3-5.5a7 7 0 0 1 7-7z"></path>
+                </svg>
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                 アイデア
@@ -211,14 +216,21 @@ function Home() {
               <div style={{
                 width: '48px',
                 height: '48px',
-                background: 'var(--primary-light)',
+                background: 'var(--surface)',
+                border: '2px solid var(--border)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 0.5rem auto'
               }}>
-                🧠
+                <svg width="24" height="24" fill="none" stroke="var(--text-secondary)" viewBox="0 0 24 24" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14,2 14,8 20,8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10,9 9,9 8,9"></polyline>
+                </svg>
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                 思考整理
@@ -229,14 +241,18 @@ function Home() {
               <div style={{
                 width: '48px',
                 height: '48px',
-                background: 'var(--primary-light)',
+                background: 'var(--surface)',
+                border: '2px solid var(--border)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 0.5rem auto'
               }}>
-                ✅
+                <svg width="24" height="24" fill="none" stroke="var(--text-secondary)" viewBox="0 0 24 24" strokeWidth="2">
+                  <polyline points="9,11 12,14 22,4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                 タスク管理
@@ -295,7 +311,12 @@ function Home() {
               alignItems: 'center',
               gap: '0.5rem'
             }}>
-              💡 使い方のヒント
+              <svg width="16" height="16" fill="none" stroke="var(--primary)" viewBox="0 0 24 24" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              使い方のヒント
             </h4>
             <ul style={{
               margin: 0,
