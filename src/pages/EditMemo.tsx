@@ -1,54 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import MemoEditor from '../components/MemoEditor';
-import { Memo } from '../types';
 
 function EditMemo() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { getMemo, isLoaded } = useMemoStorage();
-  const [memo, setMemo] = useState<Memo | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { memos, isLoaded } = useMemoStorage();
 
-  useEffect(() => {
-    if (!isLoaded) return;
-    
-    if (!id) {
-      alert('メモIDが指定されていません');
-      navigate('/');
-      return;
-    }
+  // メモを直接memosから取得（リアクティブ）
+  const memo = useMemo(() => {
+    if (!id || !isLoaded) return null;
+    return memos.find(m => m.id === id) || null;
+  }, [id, memos, isLoaded]);
 
-    const memoData = getMemo(id);
-    
-    if (memoData) {
-      setMemo(memoData);
-    } else {
-      alert('メモが見つかりませんでした');
-      navigate('/');
-      return;
-    }
-    setIsLoading(false);
-  }, [id, getMemo, navigate, isLoaded]);
-
-  if (isLoading) {
+  // データ読み込み前はスケルトンを表示
+  if (!isLoaded) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '200px' 
-      }}>
-        <div className="spinner"></div>
+      <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{
+            width: '200px',
+            height: '32px',
+            background: 'var(--skeleton-base)',
+            borderRadius: '4px',
+            marginBottom: '0.5rem'
+          }} className="skeleton" />
+          <div style={{
+            width: '300px',
+            height: '16px',
+            background: 'var(--skeleton-base)',
+            borderRadius: '4px'
+          }} className="skeleton" />
+        </div>
+        <div className="card" style={{ padding: '2rem' }}>
+          <div style={{
+            width: '100%',
+            height: '300px',
+            background: 'var(--skeleton-base)',
+            borderRadius: '8px'
+          }} className="skeleton" />
+        </div>
       </div>
     );
   }
 
+  // IDが無効またはメモが見つからない場合
+  if (!id) {
+    navigate('/', { replace: true });
+    return null;
+  }
+
   if (!memo) {
     return (
-      <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
-        <p className="text-secondary">メモが見つかりませんでした</p>
+      <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
+          <p className="text-secondary">メモが見つかりませんでした</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="btn btn-primary"
+            style={{ marginTop: '1rem' }}
+          >
+            ホームに戻る
+          </button>
+        </div>
       </div>
     );
   }
