@@ -51,19 +51,7 @@ export interface TagCloudProps {
   readonly onClearTag?: () => void;
 }
 
-export interface MemoEditorProps {
-  readonly memo?: Memo;
-  readonly mode: 'create' | 'edit';
-}
 
-// フォームの状態型
-export interface MemoFormState {
-  readonly title: string;
-  readonly content: string;
-  readonly tagInput: string;
-  readonly tags: readonly string[];
-  readonly images: readonly string[];
-}
 
 // API応答の型
 export interface ApiResponse<T> {
