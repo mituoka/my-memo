@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useMemoSort } from '../hooks/useMemoSort';
 import { useAdvancedSearch } from '../hooks/useAdvancedSearch';
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { AdvancedSearchPanel } from '../components/AdvancedSearchPanel';
+import { MemoGridSkeleton, SearchSkeleton } from '../components/common/SkeletonLoader';
 
 function Home() {
   const { memos, isLoaded, deleteMemo, togglePinMemo } = useMemoStorage();
@@ -23,6 +25,9 @@ function Home() {
   } = useAdvancedSearch(sortedMemos);
 
   const filteredMemos = searchFilteredMemos;
+
+  // キーボードナビゲーションを有効化
+  useKeyboardNavigation();
 
   const handleDelete = (id: string, title: string) => {
     if (window.confirm(`「${title}」を削除しますか？`)) {
@@ -44,13 +49,29 @@ function Home() {
 
   if (!isLoaded) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '200px' 
-      }}>
-        <div className="spinner"></div>
+      <div>
+        {/* Header Section Skeleton */}
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: '1.5rem' 
+          }}>
+            <div style={{
+              width: '150px',
+              height: '20px',
+              background: 'var(--skeleton-base)',
+              borderRadius: '4px'
+            }} className="skeleton" />
+          </div>
+          
+          {/* Search Controls Skeleton */}
+          <SearchSkeleton />
+        </div>
+
+        {/* Content Skeleton */}
+        <MemoGridSkeleton count={6} />
       </div>
     );
   }
@@ -281,12 +302,14 @@ function Home() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
                 e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.3)';
+                e.currentTarget.classList.add('glow');
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
                 e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+                e.currentTarget.classList.remove('glow');
               }}
             >
               📝 最初のメモを作成
@@ -361,12 +384,39 @@ function Home() {
       ) : (
         // Memo Grid
         <div className="grid-responsive">
-          {filteredMemos.map((memo) => (
-            <div key={memo.id} className="card" style={{ 
-              padding: '1.5rem',
-              border: memo.isPinned ? '2px solid var(--primary)' : '1px solid var(--border)',
-              background: memo.isPinned ? 'var(--primary-light)' : 'var(--surface)'
-            }}>
+          {filteredMemos.map((memo, index) => (
+            <div 
+              key={memo.id} 
+              className="card memo-card fade-in-up" 
+              tabIndex={0}
+              role="article"
+              aria-labelledby={`memo-title-${memo.id}`}
+              aria-describedby={`memo-content-${memo.id}`}
+              style={{ 
+                padding: '1.5rem',
+                border: memo.isPinned ? '2px solid var(--primary)' : '1px solid var(--border)',
+                background: memo.isPinned ? 'var(--primary-light)' : 'var(--surface)',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                animationDelay: `${index * 0.05}s`,
+                animationFillMode: 'both'
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  const editLink = e.currentTarget.querySelector('a[href*="/memo/edit/"]') as HTMLAnchorElement;
+                  if (editLink) editLink.click();
+                }
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.boxShadow = 'var(--shadow-focus)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.boxShadow = 'var(--shadow)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
               {/* Images Preview */}
               {memo.images && memo.images.length > 0 && (
                 <div style={{ marginBottom: '1rem' }}>
@@ -441,15 +491,18 @@ function Home() {
                   alignItems: 'flex-start',
                   marginBottom: '0.5rem'
                 }}>
-                  <h3 style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '600',
-                    margin: 0,
-                    color: 'var(--text-primary)',
-                    lineHeight: '1.5',
-                    wordBreak: 'break-word',
-                    flex: 1
-                  }}>
+                  <h3 
+                    id={`memo-title-${memo.id}`}
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      margin: 0,
+                      color: 'var(--text-primary)',
+                      lineHeight: '1.5',
+                      wordBreak: 'break-word',
+                      flex: 1
+                    }}
+                  >
                     {memo.title}
                   </h3>
                   
@@ -467,9 +520,11 @@ function Home() {
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'var(--surface-hover)';
+                      e.currentTarget.style.transform = 'scale(1.1)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.background = 'none';
+                      e.currentTarget.style.transform = 'scale(1)';
                     }}
                     title={memo.isPinned ? 'ピン留めを解除' : 'ピン留めする'}
                   >
@@ -487,6 +542,7 @@ function Home() {
                 
                 {memo.content && (
                   <p 
+                    id={`memo-content-${memo.id}`}
                     className="text-secondary truncate-2" 
                     style={{ 
                       margin: 0, 
@@ -554,7 +610,8 @@ function Home() {
       {/* FAB for adding new memo when memos exist */}
       {memos.length > 0 && (
         <Link 
-          to="/memo/new" 
+          to="/memo/new"
+          className="float"
           style={{
             position: 'fixed',
             bottom: '2rem',
@@ -569,15 +626,19 @@ function Home() {
             boxShadow: 'var(--shadow-lg)',
             color: 'white',
             textDecoration: 'none',
-            transition: 'all 0.2s ease'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.transform = 'scale(1.15) translateY(-2px)';
             e.currentTarget.style.backgroundColor = 'var(--primary-hover)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.4)';
+            e.currentTarget.style.animation = 'none'; // Stop floating on hover
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1)';
             e.currentTarget.style.backgroundColor = 'var(--primary)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+            e.currentTarget.style.animation = 'float 3s ease-in-out infinite'; // Resume floating
           }}
         >
           <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">

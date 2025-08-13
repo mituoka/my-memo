@@ -54,7 +54,7 @@ function EditMemo() {
   }
 
   return (
-    <div>
+    <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <h1 style={{ 
@@ -89,7 +89,10 @@ function EditMemo() {
       </div>
 
       {/* Form */}
-      <div className="card" style={{ padding: '2rem' }}>
+      <div className="card slide-in-right" style={{ 
+        padding: '2rem',
+        animationDelay: '0.2s'
+      }}>
         <MemoEditor memo={memo} mode="edit" />
       </div>
     </div>

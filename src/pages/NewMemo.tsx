@@ -3,7 +3,7 @@ import MemoEditor from '../components/MemoEditor';
 
 function NewMemo() {
   return (
-    <div>
+    <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <h1 style={{ 
@@ -20,7 +20,9 @@ function NewMemo() {
       </div>
 
       {/* Form */}
-      <MemoEditor mode="create" />
+      <div className="slide-in-right" style={{ animationDelay: '0.2s' }}>
+        <MemoEditor mode="create" />
+      </div>
     </div>
   );
 }

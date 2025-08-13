@@ -88,6 +88,7 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
           {/* 詳細検索ボタン */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
+            className={isExpanded ? 'bounce-in' : ''}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -99,14 +100,19 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               background: 'var(--background)',
               color: 'var(--text-primary)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              flexShrink: 0
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              flexShrink: 0,
+              transform: 'translateY(0)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'var(--surface-hover)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'var(--background)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,11 +208,13 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
 
       {/* Sort Options */}
       {isSortExpanded && (
-        <div style={{
-          borderTop: '1px solid var(--border)',
-          padding: '1rem',
-          background: 'var(--background)'
-        }}>
+        <div 
+          className="slide-in-right"
+          style={{
+            borderTop: '1px solid var(--border)',
+            padding: '1rem',
+            background: 'var(--background)'
+          }}>
           <h4 style={{
             fontSize: '0.875rem',
             fontWeight: '600',
@@ -301,11 +309,13 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
 
       {/* Advanced Filters */}
       {isExpanded && (
-        <div style={{
-          borderTop: '1px solid var(--border)',
-          padding: '1rem',
-          background: 'var(--background)'
-        }}>
+        <div 
+          className="slide-in-left"
+          style={{
+            borderTop: '1px solid var(--border)',
+            padding: '1rem',
+            background: 'var(--background)'
+          }}>
           {/* Tag Filter */}
           {allTags.length > 0 && (
             <div style={{ marginBottom: '1.5rem' }}>
