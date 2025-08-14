@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { MemoType } from '../types';
+import TemplateSelector from '../components/TemplateSelector';
+import { Template } from '../utils/templates';
 
 function EditMemo() {
   const navigate = useNavigate();
@@ -149,6 +151,13 @@ function EditMemo() {
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const applyTemplate = (template: Template) => {
+    setFormData(prev => ({
+      ...prev,
+      content: template.content
     }));
   };
 
@@ -375,6 +384,16 @@ function EditMemo() {
           }}>
             {formData.content.length}/5000
           </div>
+
+          {/* Template Selector for Note/Wiki */}
+          {(formData.type === 'note' || formData.type === 'wiki') && (
+            <div style={{ marginTop: '1rem' }}>
+              <TemplateSelector 
+                type={formData.type}
+                onApplyTemplate={applyTemplate}
+              />
+            </div>
+          )}
         </div>
 
         {/* Tags */}
