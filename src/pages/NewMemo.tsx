@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
+import { MemoType } from '../types';
 
 function NewMemo() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function NewMemo() {
     content: '',
     tags: [] as string[],
     images: [] as string[],
+    type: 'memo' as MemoType,
   });
   
   const [tagInput, setTagInput] = useState('');
@@ -59,6 +61,7 @@ function NewMemo() {
       content: formData.content.trim(),
       tags: formData.tags,
       images: formData.images,
+      type: formData.type,
     };
 
     try {
@@ -149,6 +152,76 @@ function NewMemo() {
         padding: '2rem',
         animationDelay: '0.2s'
       }}>
+        {/* Type Selection */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ 
+            display: 'block',
+            marginBottom: '0.5rem',
+            fontWeight: '600',
+            color: 'var(--text-primary)'
+          }}>
+            タイプ *
+          </label>
+          <div style={{
+            display: 'flex',
+            gap: '0.75rem',
+            flexWrap: 'wrap'
+          }}>
+            {(['memo', 'note', 'wiki'] as MemoType[]).map((type) => (
+              <label
+                key={type}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem 1rem',
+                  border: `2px solid ${formData.type === type ? 'var(--primary)' : 'var(--border)'}`,
+                  borderRadius: '8px',
+                  backgroundColor: formData.type === type ? 'var(--primary-light)' : 'transparent',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  minWidth: '80px',
+                  justifyContent: 'center'
+                }}
+                onMouseEnter={(e) => {
+                  if (formData.type !== type) {
+                    e.currentTarget.style.borderColor = 'var(--primary)';
+                    e.currentTarget.style.backgroundColor = 'var(--primary-light)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (formData.type !== type) {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <input
+                  type="radio"
+                  name="type"
+                  value={type}
+                  checked={formData.type === type}
+                  onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as MemoType }))}
+                  style={{ display: 'none' }}
+                />
+                <div style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: type === 'memo' ? '#3B82F6' : type === 'note' ? '#10B981' : '#F59E0B'
+                }}></div>
+                <span style={{
+                  fontWeight: '500',
+                  color: 'var(--text-primary)',
+                  textTransform: 'capitalize'
+                }}>
+                  {type === 'memo' ? 'メモ' : type === 'note' ? 'ノート' : 'Wiki'}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
         {/* Title */}
         <div style={{ marginBottom: '1.5rem' }}>
           <label style={{ 

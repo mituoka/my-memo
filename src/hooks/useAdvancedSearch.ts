@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import type { Memo } from '@/types';
+import type { Memo, MemoType } from '@/types';
 
 export interface SearchFilters {
   searchTerm: string;
   selectedTags: string[];
   hasImages: boolean | null; // null = all, true = with images, false = without images
+  selectedTypes: MemoType[]; // empty array = all types
   dateRange: {
     start: string;
     end: string;
@@ -15,6 +16,7 @@ const DEFAULT_FILTERS: SearchFilters = {
   searchTerm: '',
   selectedTags: [],
   hasImages: null,
+  selectedTypes: [],
   dateRange: null
 };
 
@@ -48,6 +50,12 @@ export const useAdvancedSearch = (memos: readonly Memo[]) => {
           memo.tags.includes(selectedTag)
         );
         if (!hasSelectedTag) return false;
+      }
+
+      // タイプフィルター
+      if (filters.selectedTypes.length > 0) {
+        const memoType = memo.type || 'memo';
+        if (!filters.selectedTypes.includes(memoType)) return false;
       }
 
       // 画像フィルター
@@ -86,6 +94,15 @@ export const useAdvancedSearch = (memos: readonly Memo[]) => {
     }));
   };
 
+  const toggleType = (type: MemoType) => {
+    setFilters(prev => ({
+      ...prev,
+      selectedTypes: prev.selectedTypes.includes(type)
+        ? prev.selectedTypes.filter(t => t !== type)
+        : [...prev.selectedTypes, type]
+    }));
+  };
+
   const setImageFilter = (hasImages: boolean | null) => {
     setFilters(prev => ({ ...prev, hasImages }));
   };
@@ -104,6 +121,7 @@ export const useAdvancedSearch = (memos: readonly Memo[]) => {
   const hasActiveFilters = Boolean(
     filters.searchTerm ||
     filters.selectedTags.length > 0 ||
+    filters.selectedTypes.length > 0 ||
     filters.hasImages !== null ||
     filters.dateRange
   );
@@ -114,6 +132,7 @@ export const useAdvancedSearch = (memos: readonly Memo[]) => {
     allTags,
     updateSearchTerm,
     toggleTag,
+    toggleType,
     setImageFilter,
     setDateRange,
     clearFilters,

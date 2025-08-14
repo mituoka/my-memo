@@ -5,6 +5,8 @@ export interface Tag {
   readonly name: string;
 }
 
+export type MemoType = 'memo' | 'note' | 'wiki';
+
 export interface Memo {
   readonly id: string;
   readonly title: string;
@@ -14,6 +16,7 @@ export interface Memo {
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly isPinned?: boolean;
+  readonly type?: MemoType;
 }
 
 // API用のMemo型（後方互換性のため保持）
@@ -32,6 +35,7 @@ export interface MemoCreate {
   readonly content: string;
   readonly tags: readonly string[];
   readonly images?: readonly string[];
+  readonly type?: MemoType;
 }
 
 export interface MemoUpdate {
@@ -39,6 +43,7 @@ export interface MemoUpdate {
   readonly content?: string;
   readonly tags?: readonly string[];
   readonly images?: readonly string[];
+  readonly type?: MemoType;
 }
 
 // コンポーネントのプロパティ型

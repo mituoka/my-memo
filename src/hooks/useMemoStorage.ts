@@ -17,7 +17,8 @@ export const useMemoStorage = () => {
         const memosWithImages = parsedMemos.map((memo: any) => ({
           ...memo,
           images: memo.images || [],
-          isPinned: memo.isPinned || false
+          isPinned: memo.isPinned || false,
+          type: memo.type || 'memo'
         }));
         setMemos(memosWithImages);
       }
@@ -59,6 +60,7 @@ export const useMemoStorage = () => {
       updatedAt: now,
       images: memo.images || [],
       isPinned: false,
+      type: memo.type || 'memo',
     };
     
     const updatedMemos = [...memos, newMemo];

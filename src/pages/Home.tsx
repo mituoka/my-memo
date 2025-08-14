@@ -18,6 +18,7 @@ function Home() {
     allTags,
     updateSearchTerm,
     toggleTag,
+    toggleType,
     setImageFilter,
     setDateRange,
     clearFilters,
@@ -118,6 +119,7 @@ function Home() {
               allTags={allTags}
               onSearchTermChange={updateSearchTerm}
               onToggleTag={toggleTag}
+              onToggleType={toggleType}
               onImageFilterChange={setImageFilter}
               onDateRangeChange={setDateRange}
               onClearFilters={clearFilters}
@@ -396,6 +398,11 @@ function Home() {
                 padding: '1.5rem',
                 border: memo.isPinned ? '2px solid var(--primary)' : '1px solid var(--border)',
                 background: memo.isPinned ? 'var(--primary-light)' : 'var(--surface)',
+                borderLeft: `4px solid ${
+                  memo.type === 'note' ? '#10B981' : 
+                  memo.type === 'wiki' ? '#F59E0B' : 
+                  '#3B82F6'
+                }`,
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 animationDelay: `${index * 0.05}s`,
@@ -491,20 +498,52 @@ function Home() {
                   alignItems: 'flex-start',
                   marginBottom: '0.5rem'
                 }}>
-                  <h3 
-                    id={`memo-title-${memo.id}`}
-                    style={{
-                      fontSize: '1.125rem',
-                      fontWeight: '600',
-                      margin: 0,
-                      color: 'var(--text-primary)',
-                      lineHeight: '1.5',
-                      wordBreak: 'break-word',
-                      flex: 1
-                    }}
-                  >
-                    {memo.title}
-                  </h3>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    flex: 1 
+                  }}>
+                    {/* Type Badge */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '12px',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      background: memo.type === 'note' ? '#10B981' : 
+                                 memo.type === 'wiki' ? '#F59E0B' : 
+                                 '#3B82F6',
+                      color: 'white'
+                    }}>
+                      <div style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                      }}></div>
+                      {memo.type === 'note' ? 'ノート' : 
+                       memo.type === 'wiki' ? 'Wiki' : 
+                       'メモ'}
+                    </div>
+                    
+                    <h3 
+                      id={`memo-title-${memo.id}`}
+                      style={{
+                        fontSize: '1.125rem',
+                        fontWeight: '600',
+                        margin: 0,
+                        color: 'var(--text-primary)',
+                        lineHeight: '1.5',
+                        wordBreak: 'break-word',
+                        flex: 1
+                      }}
+                    >
+                      {memo.title}
+                    </h3>
+                  </div>
                   
                   <button
                     onClick={() => togglePinMemo(memo.id)}

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import type { SearchFilters } from '../hooks/useAdvancedSearch';
-import type { SortSettings, SortField } from '@/types';
+import type { SortSettings, SortField, MemoType } from '@/types';
 
 interface AdvancedSearchPanelProps {
   readonly filters: SearchFilters;
   readonly allTags: readonly string[];
   readonly onSearchTermChange: (term: string) => void;
   readonly onToggleTag: (tag: string) => void;
+  readonly onToggleType: (type: MemoType) => void;
   readonly onImageFilterChange: (hasImages: boolean | null) => void;
   readonly onDateRangeChange: (start: string, end: string) => void;
   readonly onClearFilters: () => void;
@@ -21,6 +22,7 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   allTags,
   onSearchTermChange,
   onToggleTag,
+  onToggleType,
   onImageFilterChange,
   onDateRangeChange,
   onClearFilters,
@@ -369,6 +371,65 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               </div>
             </div>
           )}
+
+          {/* Type Filter */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h4 style={{
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              margin: '0 0 0.75rem 0',
+              color: 'var(--text-primary)'
+            }}>
+              タイプで絞り込み
+            </h4>
+            <div style={{
+              display: 'flex',
+              gap: '0.5rem',
+              flexWrap: 'wrap'
+            }}>
+              {(['memo', 'note', 'wiki'] as MemoType[]).map(type => (
+                <button
+                  key={type}
+                  onClick={() => onToggleType(type)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 0.75rem',
+                    fontSize: '0.875rem',
+                    border: '1px solid var(--border)',
+                    borderRadius: '20px',
+                    background: filters.selectedTypes.includes(type) 
+                      ? 'var(--primary)' 
+                      : 'var(--surface)',
+                    color: filters.selectedTypes.includes(type) 
+                      ? 'white' 
+                      : 'var(--text-primary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!filters.selectedTypes.includes(type)) {
+                      e.currentTarget.style.background = 'var(--surface-hover)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!filters.selectedTypes.includes(type)) {
+                      e.currentTarget.style.background = 'var(--surface)';
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: type === 'memo' ? '#3B82F6' : type === 'note' ? '#10B981' : '#F59E0B'
+                  }}></div>
+                  {type === 'memo' ? 'メモ' : type === 'note' ? 'ノート' : 'Wiki'}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Image Filter */}
           <div style={{ marginBottom: '1.5rem' }}>
