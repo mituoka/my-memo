@@ -589,155 +589,169 @@ function Home() {
                 </div>
               )}
               
-              {/* Memo Header */}
-              <div style={{ marginBottom: '1rem' }}>
+              {/* Memo Content */}
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                flex: 1,
+                minHeight: 0
+              }}>
+                {/* Header section */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'flex-start',
+                    marginBottom: '0.5rem'
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '0.5rem', 
+                      flex: 1 
+                    }}>
+                      {/* Type Badge */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '12px',
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        background: memo.type === 'note' ? '#10B981' : 
+                                   memo.type === 'wiki' ? '#F59E0B' : 
+                                   '#3B82F6',
+                        color: 'white'
+                      }}>
+                        <div style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }}></div>
+                        {memo.type === 'note' ? 'ノート' : 
+                         memo.type === 'wiki' ? 'Wiki' : 
+                         'メモ'}
+                      </div>
+                      
+                      <h3 
+                        id={`memo-title-${memo.id}`}
+                        style={{
+                          fontSize: '1.125rem',
+                          fontWeight: '600',
+                          margin: 0,
+                          color: 'var(--text-primary)',
+                          lineHeight: '1.5',
+                          wordBreak: 'break-word',
+                          flex: 1
+                        }}
+                      >
+                        {memo.title}
+                      </h3>
+                    </div>
+                    
+                    <button
+                      onClick={() => togglePinMemo(memo.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '0.25rem',
+                        marginLeft: '0.5rem',
+                        borderRadius: '4px',
+                        color: memo.isPinned ? 'var(--primary)' : 'var(--text-muted)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'var(--surface-hover)';
+                        e.currentTarget.style.transform = 'scale(1.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'none';
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                      title={memo.isPinned ? 'ピン留めを解除' : 'ピン留めする'}
+                    >
+                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        {memo.isPinned ? (
+                          // ピン留め済み（塗りつぶしピン）
+                          <path d="M16 4v4c0 1.1-.9 2-2 2h-1v6l-1 1-1-1v-6H9c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h5c1.1 0 2 .9 2 2z"/>
+                        ) : (
+                          // ピン留めなし（アウトラインピン）
+                          <path d="M16 4v4c0 1.1-.9 2-2 2h-1v6l-1 1-1-1v-6H9c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h5c1.1 0 2 .9 2 2zm-2 0H9v4h5V4z"/>
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  {memo.content && (
+                    <p 
+                      id={`memo-content-${memo.id}`}
+                      className="text-secondary truncate-2" 
+                      style={{ 
+                        margin: 0, 
+                        fontSize: '0.875rem',
+                        lineHeight: '1.5'
+                      }}
+                    >
+                      {memo.content}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Tags section */}
+                {memo.tags.length > 0 && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      {memo.tags.map((tag) => (
+                        <span key={tag} className="tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Spacer to push footer to bottom */}
+                <div style={{ flex: 1 }}></div>
+                
+                {/* Fixed footer at bottom */}
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
-                  alignItems: 'flex-start',
-                  marginBottom: '0.5rem'
+                  alignItems: 'center',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid var(--border)',
+                  marginTop: 'auto'
                 }}>
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '0.5rem', 
-                    flex: 1 
-                  }}>
-                    {/* Type Badge */}
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      padding: '0.25rem 0.5rem',
-                      borderRadius: '12px',
-                      fontSize: '0.75rem',
-                      fontWeight: '500',
-                      background: memo.type === 'note' ? '#10B981' : 
-                                 memo.type === 'wiki' ? '#F59E0B' : 
-                                 '#3B82F6',
-                      color: 'white'
-                    }}>
-                      <div style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)'
-                      }}></div>
-                      {memo.type === 'note' ? 'ノート' : 
-                       memo.type === 'wiki' ? 'Wiki' : 
-                       'メモ'}
-                    </div>
-                    
-                    <h3 
-                      id={`memo-title-${memo.id}`}
-                      style={{
-                        fontSize: '1.125rem',
-                        fontWeight: '600',
-                        margin: 0,
-                        color: 'var(--text-primary)',
-                        lineHeight: '1.5',
-                        wordBreak: 'break-word',
-                        flex: 1
+                  <span className="text-muted" style={{ fontSize: '0.8125rem' }}>
+                    {formatDate(memo.createdAt)}
+                    {memo.updatedAt !== memo.createdAt && (
+                      <span style={{ marginLeft: '0.5rem' }}>
+                        (編集済み)
+                      </span>
+                    )}
+                  </span>
+                  
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Link
+                      to={`/memo/edit/${memo.id}`}
+                      className="btn btn-secondary btn-sm"
+                    >
+                      編集
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(memo.id, memo.title)}
+                      className="btn btn-secondary btn-sm"
+                      style={{ 
+                        color: 'var(--error)',
+                        borderColor: 'color-mix(in srgb, var(--error) 30%, transparent)'
                       }}
                     >
-                      {memo.title}
-                    </h3>
+                      削除
+                    </button>
                   </div>
-                  
-                  <button
-                    onClick={() => togglePinMemo(memo.id)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '0.25rem',
-                      marginLeft: '0.5rem',
-                      borderRadius: '4px',
-                      color: memo.isPinned ? 'var(--primary)' : 'var(--text-muted)',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'var(--surface-hover)';
-                      e.currentTarget.style.transform = 'scale(1.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'none';
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                    title={memo.isPinned ? 'ピン留めを解除' : 'ピン留めする'}
-                  >
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                      {memo.isPinned ? (
-                        // ピン留め済み（塗りつぶしピン）
-                        <path d="M16 4v4c0 1.1-.9 2-2 2h-1v6l-1 1-1-1v-6H9c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h5c1.1 0 2 .9 2 2z"/>
-                      ) : (
-                        // ピン留めなし（アウトラインピン）
-                        <path d="M16 4v4c0 1.1-.9 2-2 2h-1v6l-1 1-1-1v-6H9c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h5c1.1 0 2 .9 2 2zm-2 0H9v4h5V4z"/>
-                      )}
-                    </svg>
-                  </button>
-                </div>
-                
-                {memo.content && (
-                  <p 
-                    id={`memo-content-${memo.id}`}
-                    className="text-secondary truncate-2" 
-                    style={{ 
-                      margin: 0, 
-                      fontSize: '0.875rem',
-                      lineHeight: '1.5'
-                    }}
-                  >
-                    {memo.content}
-                  </p>
-                )}
-              </div>
-              
-              {/* Tags */}
-              {memo.tags.length > 0 && (
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {memo.tags.map((tag) => (
-                      <span key={tag} className="tag">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Footer */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center' 
-              }}>
-                <span className="text-muted" style={{ fontSize: '0.8125rem' }}>
-                  {formatDate(memo.createdAt)}
-                  {memo.updatedAt !== memo.createdAt && (
-                    <span style={{ marginLeft: '0.5rem' }}>
-                      (編集済み)
-                    </span>
-                  )}
-                </span>
-                
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <Link
-                    to={`/memo/edit/${memo.id}`}
-                    className="btn btn-secondary btn-sm"
-                  >
-                    編集
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(memo.id, memo.title)}
-                    className="btn btn-secondary btn-sm"
-                    style={{ 
-                      color: 'var(--error)',
-                      borderColor: 'color-mix(in srgb, var(--error) 30%, transparent)'
-                    }}
-                  >
-                    削除
-                  </button>
                 </div>
               </div>
             </div>

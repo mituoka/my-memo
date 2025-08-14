@@ -135,24 +135,42 @@ function MemoList({ selectedTag }: Readonly<MemoListProps>) {
                     </div>
                   </div>
                 )}
-                <h3 className="font-medium text-lg truncate" style={{color: 'var(--foreground)'}}>{memo.title}</h3>
-                <p className="text-sm line-clamp-3 mt-1" style={{color: 'var(--foreground)', opacity: 0.8}}>{memo.content}</p>
                 
-                {memo.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-3">
-                    {memo.tags.map(tag => (
-                      <span 
-                        key={tag.id} 
-                        className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-0.5 rounded"
-                      >
-                        {tag.name}
-                      </span>
-                    ))}
+                {/* Content container with flex layout */}
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  minHeight: '120px'
+                }}>
+                  <h3 className="font-medium text-lg truncate" style={{color: 'var(--foreground)'}}>{memo.title}</h3>
+                  <p className="text-sm line-clamp-3 mt-1" style={{color: 'var(--foreground)', opacity: 0.8}}>{memo.content}</p>
+                  
+                  {memo.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-3">
+                      {memo.tags.map(tag => (
+                        <span 
+                          key={tag} 
+                          className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-0.5 rounded"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Spacer to push footer to bottom */}
+                  <div style={{ flex: 1 }}></div>
+                  
+                  {/* Fixed footer at bottom */}
+                  <div className="text-xs mt-3" style={{
+                    color: 'var(--foreground)', 
+                    opacity: 0.6,
+                    paddingTop: '0.75rem',
+                    borderTop: '1px solid var(--custom-secondary)',
+                    marginTop: 'auto'
+                  }}>
+                    更新: {new Date(memo.updatedAt).toLocaleString()}
                   </div>
-                )}
-                
-                <div className="text-xs mt-3" style={{color: 'var(--foreground)', opacity: 0.6}}>
-                  更新: {new Date(memo.updated_at).toLocaleString()}
                 </div>
               </div>
             </Link>
