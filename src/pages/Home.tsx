@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useMemoSort } from '../hooks/useMemoSort';
 import { useAdvancedSearch } from '../hooks/useAdvancedSearch';
@@ -8,6 +8,7 @@ import { AdvancedSearchPanel } from '../components/AdvancedSearchPanel';
 import { MemoGridSkeleton, SearchSkeleton } from '../components/common/SkeletonLoader';
 
 function Home() {
+  const navigate = useNavigate();
   const { memos, isLoaded, deleteMemo, togglePinMemo } = useMemoStorage();
   
   const { sortedMemos, sortSettings, updateSort, getSortLabel } = useMemoSort(memos);
@@ -408,11 +409,18 @@ function Home() {
                 animationDelay: `${index * 0.05}s`,
                 animationFillMode: 'both'
               }}
+              onClick={(e) => {
+                // 編集・削除・ピン留めボタンのクリックは無視
+                const target = e.target as HTMLElement;
+                if (target.closest('button') || target.closest('a')) {
+                  return;
+                }
+                navigate(`/memo/${memo.id}`);
+              }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  const editLink = e.currentTarget.querySelector('a[href*="/memo/edit/"]') as HTMLAnchorElement;
-                  if (editLink) editLink.click();
+                  navigate(`/memo/${memo.id}`);
                 }
               }}
               onFocus={(e) => {

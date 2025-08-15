@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import NewMemo from './pages/NewMemo';
 import EditMemo from './pages/EditMemo';
+import MemoDetail from './pages/MemoDetail';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { ShortcutsHelp } from './components/ShortcutsHelp';
 import { PWABanner } from './components/PWABanner';
@@ -55,6 +56,7 @@ function AppWithKeyboardShortcuts() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/memo/new" element={<NewMemo />} />
+          <Route path="/memo/:id" element={<MemoDetail />} />
           <Route path="/memo/edit/:id" element={<EditMemo />} />
         </Routes>
       </Layout>
