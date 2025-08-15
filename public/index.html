@@ -31,5 +31,20 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    
+    <!-- GitHub Pages SPA routing support -->
+    <script>
+      (function() {
+        // 404.htmlからリダイレクトされた場合の処理
+        const path = sessionStorage.getItem('spa-path');
+        if (path) {
+          sessionStorage.removeItem('spa-path');
+          // React Routerが読み込まれた後にナビゲート
+          window.addEventListener('load', function() {
+            window.history.replaceState(null, null, '/my-memo/' + path);
+          });
+        }
+      })();
+    </script>
   </body>
 </html>

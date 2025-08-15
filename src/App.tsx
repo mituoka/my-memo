@@ -37,6 +37,19 @@ function AppWithKeyboardShortcuts() {
     }
   });
 
+  // GitHub Pages SPA routing support
+  React.useEffect(() => {
+    const path = sessionStorage.getItem('spa-path');
+    if (path) {
+      sessionStorage.removeItem('spa-path');
+      // React Routerのコンポーネントがマウントされた後に実行
+      setTimeout(() => {
+        window.history.replaceState(null, null, '/my-memo/' + path);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }, 0);
+    }
+  }, []);
+
   // Override the global shortcut to show help
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

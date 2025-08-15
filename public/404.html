@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>My Memo App</title>
+  <script>
+    // GitHub PagesでのSPAルーティング対応
+    // 現在のパスを記録してからindex.htmlにリダイレクト
+    const path = window.location.pathname.slice(1);
+    const query = window.location.search;
+    const hash = window.location.hash;
+    
+    // パスがある場合は、セッションストレージに保存
+    if (path) {
+      sessionStorage.setItem('spa-path', path + query + hash);
+    }
+    
+    // ベースURLにリダイレクト（GitHub Pagesのproject site用）
+    window.location.replace('/my-memo/');
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
