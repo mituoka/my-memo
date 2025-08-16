@@ -4,6 +4,7 @@ import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useMemoSort } from '../hooks/useMemoSort';
 import { useAdvancedSearch } from '../hooks/useAdvancedSearch';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
+import { useViewMode } from '../hooks/useViewMode';
 import { AdvancedSearchPanel } from '../components/AdvancedSearchPanel';
 import { MemoGridSkeleton, SearchSkeleton } from '../components/common/SkeletonLoader';
 
@@ -12,6 +13,7 @@ function Home() {
   const { memos, isLoaded, deleteMemo, togglePinMemo } = useMemoStorage();
   
   const { sortedMemos, sortSettings, updateSort, getSortLabel } = useMemoSort(memos);
+  const { viewSettings, setViewMode } = useViewMode();
   
   const {
     filters,
@@ -128,6 +130,8 @@ function Home() {
               sortSettings={sortSettings}
               onSort={updateSort}
               getSortLabel={getSortLabel}
+              viewSettings={viewSettings}
+              onViewModeChange={setViewMode}
             />
           </div>
         )}
@@ -385,12 +389,12 @@ function Home() {
           )}
         </div>
       ) : (
-        // Memo Grid
-        <div className="grid-responsive">
+        // Memo Grid/List
+        <div className={`view-${viewSettings.mode}`}>
           {filteredMemos.map((memo, index) => (
             <div 
               key={memo.id} 
-              className="card memo-card fade-in-up" 
+              className={`card memo-card fade-in-up ${viewSettings.mode === 'list' ? 'memo-card-list' : 'memo-card-grid'}`} 
               tabIndex={0}
               role="article"
               aria-labelledby={`memo-title-${memo.id}`}
@@ -435,11 +439,29 @@ function Home() {
               {/* Memo Content */}
               <div style={{ 
                 display: 'flex', 
-                flexDirection: 'column',
+                flexDirection: viewSettings.mode === 'list' ? 'row' : 'column',
+                gap: viewSettings.mode === 'list' ? '1rem' : '0',
                 flex: 1,
                 minHeight: 0
               }}>
-                {/* Header section */}
+                {/* 画像プレビュー（リスト表示時は左側） */}
+                {viewSettings.mode === 'list' && memo.images && memo.images.length > 0 && (
+                  <div className="memo-card-image-preview">
+                    <img
+                      src={memo.images[0]}
+                      alt={memo.title}
+                    />
+                  </div>
+                )}
+                
+                {/* メインコンテンツ */}
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  flex: 1,
+                  minHeight: 0
+                }}>
+                  {/* Header section */}
                 <div style={{ marginBottom: '1rem' }}>
                   <div style={{ 
                     display: 'flex', 
@@ -556,8 +578,8 @@ function Home() {
                   </div>
                 )}
                 
-                {/* Images Preview or Placeholder - Moved after tags */}
-                {memo.images && memo.images.length > 0 ? (
+                {/* Images Preview or Placeholder - グリッド表示時のみ */}
+                {viewSettings.mode !== 'list' && (memo.images && memo.images.length > 0 ? (
                   <div style={{ marginBottom: '1rem' }}>
                     {memo.images.length === 1 ? (
                       // Single image
@@ -620,8 +642,8 @@ function Home() {
                       </div>
                     )}
                   </div>
-                ) : (
-                  // Type-based placeholder - compact version after tags
+                ) : viewSettings.mode !== 'list' ? (
+                  // Type-based placeholder - compact version after tags (グリッド表示時のみ)
                   <div style={{ 
                     marginBottom: '1rem',
                     height: '80px',
@@ -674,7 +696,7 @@ function Home() {
                       画像なし
                     </div>
                   </div>
-                )}
+                ) : null)}
                 
                 {/* Spacer to push footer to bottom */}
                 <div style={{ flex: 1 }}></div>
@@ -715,6 +737,7 @@ function Home() {
                       削除
                     </button>
                   </div>
+                </div>
                 </div>
               </div>
             </div>

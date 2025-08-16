@@ -79,3 +79,10 @@ export interface SortSettings {
   readonly field: SortField;
   readonly order: SortOrder;
 }
+
+// 表示形式関連の型
+export type ViewMode = 'grid-2' | 'grid-3' | 'list';
+
+export interface ViewSettings {
+  readonly mode: ViewMode;
+}

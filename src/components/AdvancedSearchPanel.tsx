@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { SearchFilters } from '../hooks/useAdvancedSearch';
-import type { SortSettings, SortField, MemoType } from '@/types';
+import type { SortSettings, SortField, MemoType, ViewSettings, ViewMode } from '@/types';
 
 interface AdvancedSearchPanelProps {
   readonly filters: SearchFilters;
@@ -15,6 +15,8 @@ interface AdvancedSearchPanelProps {
   readonly sortSettings: SortSettings;
   readonly onSort: (field: SortField) => void;
   readonly getSortLabel: (field: SortField) => string;
+  readonly viewSettings: ViewSettings;
+  readonly onViewModeChange: (mode: ViewMode) => void;
 }
 
 export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
@@ -29,7 +31,9 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   hasActiveFilters,
   sortSettings,
   onSort,
-  getSortLabel
+  getSortLabel,
+  viewSettings,
+  onViewModeChange
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSortExpanded, setIsSortExpanded] = useState(false);
@@ -186,6 +190,122 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               )}
             </div>
           </button>
+
+          {/* 表示形式切り替えボタン */}
+          <div style={{
+            display: 'flex',
+            border: '1px solid var(--border)',
+            borderRadius: '6px',
+            overflow: 'hidden',
+            flexShrink: 0
+          }}>
+            <button
+              onClick={() => onViewModeChange('grid-2')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.5rem 0.75rem',
+                fontSize: '0.875rem',
+                border: 'none',
+                background: viewSettings.mode === 'grid-2' ? 'var(--primary)' : 'var(--background)',
+                color: viewSettings.mode === 'grid-2' ? 'white' : 'var(--text-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minWidth: '44px'
+              }}
+              onMouseEnter={(e) => {
+                if (viewSettings.mode !== 'grid-2') {
+                  e.currentTarget.style.background = 'var(--surface-hover)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (viewSettings.mode !== 'grid-2') {
+                  e.currentTarget.style.background = 'var(--background)';
+                }
+              }}
+              title="2列グリッド表示"
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+            <button
+              onClick={() => onViewModeChange('grid-3')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.5rem 0.75rem',
+                fontSize: '0.875rem',
+                border: 'none',
+                background: viewSettings.mode === 'grid-3' ? 'var(--primary)' : 'var(--background)',
+                color: viewSettings.mode === 'grid-3' ? 'white' : 'var(--text-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minWidth: '44px'
+              }}
+              onMouseEnter={(e) => {
+                if (viewSettings.mode !== 'grid-3') {
+                  e.currentTarget.style.background = 'var(--surface-hover)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (viewSettings.mode !== 'grid-3') {
+                  e.currentTarget.style.background = 'var(--background)';
+                }
+              }}
+              title="3列グリッド表示"
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <rect x="3" y="3" width="5" height="5"></rect>
+                <rect x="10" y="3" width="4" height="5"></rect>
+                <rect x="16" y="3" width="5" height="5"></rect>
+                <rect x="3" y="10" width="5" height="5"></rect>
+                <rect x="10" y="10" width="4" height="5"></rect>
+                <rect x="16" y="10" width="5" height="5"></rect>
+              </svg>
+            </button>
+            <button
+              onClick={() => onViewModeChange('list')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.5rem 0.75rem',
+                fontSize: '0.875rem',
+                border: 'none',
+                background: viewSettings.mode === 'list' ? 'var(--primary)' : 'var(--background)',
+                color: viewSettings.mode === 'list' ? 'white' : 'var(--text-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minWidth: '44px'
+              }}
+              onMouseEnter={(e) => {
+                if (viewSettings.mode !== 'list') {
+                  e.currentTarget.style.background = 'var(--surface-hover)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (viewSettings.mode !== 'list') {
+                  e.currentTarget.style.background = 'var(--background)';
+                }
+              }}
+              title="リスト表示"
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+          </div>
 
           {hasActiveFilters && (
             <button
