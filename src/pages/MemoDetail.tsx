@@ -4,6 +4,7 @@ import { useMemoStorage } from '../hooks/useMemoStorage';
 import { getRelativeTime, formatDate } from '../utils/timeUtils';
 import { parseMarkdown } from '../utils/markdownUtils';
 import DeleteConfirmModal from '../components/modals/DeleteConfirmModal';
+import ImageViewerModal from '../components/modals/ImageViewerModal';
 
 function MemoDetail() {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +12,8 @@ function MemoDetail() {
   const { memos, deleteMemo } = useMemoStorage();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   
   const memo = memos.find(m => m.id === id);
   const memoIndex = memos.findIndex(m => m.id === id);
@@ -54,6 +57,11 @@ function MemoDetail() {
   
   const handleTagClick = (tag: string) => {
     navigate(`/?tag=${encodeURIComponent(tag)}`);
+  };
+  
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index);
+    setShowImageViewer(true);
   };
 
   return (
@@ -122,7 +130,7 @@ function MemoDetail() {
               <div 
                 key={index} 
                 className={`memo-image-item ${memo.images!.length === 1 ? 'single' : 'multiple'}`}
-                onClick={() => window.open(image, '_blank')}
+                onClick={() => handleImageClick(index)}
                 title="クリックで拡大表示"
               >
                 <img
@@ -213,6 +221,17 @@ function MemoDetail() {
         title={memo.title}
         isLoading={isDeleting}
       />
+      
+      {/* 画像ビューアーモーダル */}
+      {memo.images && memo.images.length > 0 && (
+        <ImageViewerModal
+          isOpen={showImageViewer}
+          onClose={() => setShowImageViewer(false)}
+          images={memo.images}
+          initialIndex={selectedImageIndex}
+          title={memo.title}
+        />
+      )}
     </div>
   );
 }
