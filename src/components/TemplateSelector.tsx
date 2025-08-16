@@ -61,7 +61,6 @@ function TemplateSelector({ type, onApplyTemplate, className = '' }: TemplateSel
       >
         <div
           style={{
-            background: 'var(--surface)',
             border: '1px solid var(--border)',
             borderRadius: '8px',
             boxShadow: 'var(--shadow)',
