@@ -5,6 +5,9 @@ import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useBackup } from '../hooks/useBackup';
 import { useBackground } from '../contexts/BackgroundContext';
 import { useFont } from '../contexts/FontContext';
+import BackupMenu from './menus/BackupMenu';
+import BackgroundMenu from './menus/BackgroundMenu';
+import FontMenu from './menus/FontMenu';
 
 function Header() {
   const navigate = useNavigate();
@@ -74,6 +77,7 @@ function Header() {
     setShowFontMenu(false);
   };
 
+
   return (
     <header className="header">
       <div className="container" style={{ 
@@ -136,64 +140,13 @@ function Header() {
             </svg>
           </button>
 
-          {showFontMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                right: '9rem',
-                marginTop: '0.5rem',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                boxShadow: 'var(--shadow-lg)',
-                zIndex: 1000,
-                minWidth: '200px',
-                overflow: 'hidden'
-              }}
-            >
-              <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                フォント: {currentFont.name}
-              </div>
-
-              {fontOptions.map(font => (
-                <button
-                  key={font.id}
-                  onClick={() => handleFontChange(font.id)}
-                  style={{
-                    width: '100%',
-                    padding: '0.6rem 0.75rem',
-                    background: currentFont.id === font.id ? 'var(--background)' : 'transparent',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid var(--border)',
-                    fontFamily: font.fontFamily,
-                    fontSize: '0.875rem',
-                    color: 'var(--text-primary)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (currentFont.id !== font.id) {
-                      e.currentTarget.style.background = 'var(--background)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (currentFont.id !== font.id) {
-                      e.currentTarget.style.background = 'transparent';
-                    }
-                  }}
-                >
-                  <span>{font.name}</span>
-                  {currentFont.id === font.id && (
-                    <span style={{ color: 'var(--primary)', fontSize: '0.75rem' }}>✓</span>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
+          <FontMenu
+            isOpen={showFontMenu}
+            onClose={() => setShowFontMenu(false)}
+            currentFont={currentFont}
+            fontOptions={fontOptions}
+            onFontChange={handleFontChange}
+          />
 
           {/* 背景設定メニュー */}
           <button
@@ -218,154 +171,16 @@ function Header() {
             </svg>
           </button>
 
-          {showBackgroundMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                right: '6rem',
-                marginTop: '0.5rem',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                boxShadow: 'var(--shadow-lg)',
-                zIndex: 1000,
-                minWidth: '280px',
-                maxHeight: '400px',
-                overflow: 'auto'
-              }}
-            >
-              {/* カスタム画像アップロード */}
-              <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
-                <label
-                  htmlFor="background-upload"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.5rem',
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  背景画像
-                </label>
-                <input
-                  id="background-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    border: '1px solid var(--border)',
-                    borderRadius: '4px',
-                    fontSize: '0.875rem'
-                  }}
-                />
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
-                  JPG, PNG, GIF (最大5MB)
-                </p>
-              </div>
-
-              {/* プリセット背景 */}
-              <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                  {getPresets().map(preset => (
-                    <button
-                      key={preset.id}
-                      onClick={() => handlePresetSelect(preset.id)}
-                      style={{
-                        padding: '0.5rem',
-                        border: settings.presetId === preset.id ? '2px solid var(--primary)' : '1px solid var(--border)',
-                        borderRadius: '4px',
-                        background: preset.thumbnail,
-                        height: '40px',
-                        cursor: 'pointer',
-                        position: 'relative',
-                        overflow: 'hidden'
-                      }}
-                      title={preset.name}
-                    >
-                      <div
-                        style={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          background: 'rgba(0,0,0,0.7)',
-                          color: 'white',
-                          fontSize: '0.625rem',
-                          padding: '0.125rem 0.25rem',
-                          textAlign: 'center'
-                        }}
-                      >
-                        {preset.name}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 透明度・ブラー設定 */}
-              {settings.type !== 'none' && (
-                <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
-                      透明度: {Math.round(settings.opacity * 100)}%
-                    </label>
-                    <input
-                      type="range"
-                      min="0.1"
-                      max="1"
-                      step="0.1"
-                      value={settings.opacity}
-                      onChange={(e) => updateSettings({ opacity: parseFloat(e.target.value) })}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
-                      ブラー: {settings.blur}px
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={settings.blur}
-                      onChange={(e) => updateSettings({ blur: parseInt(e.target.value) })}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* リセットボタン */}
-              <div style={{ padding: '1rem' }}>
-                <button
-                  onClick={handleBackgroundReset}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    background: 'transparent',
-                    border: '1px solid var(--border)',
-                    borderRadius: '4px',
-                    color: 'var(--text-secondary)',
-                    cursor: 'pointer',
-                    fontSize: '0.875rem'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--background)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '0.5rem'}}>
-                    <polyline points="3,6 5,6 21,6"/>
-                    <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
-                  </svg>
-                  背景をリセット
-                </button>
-              </div>
-            </div>
-          )}
+          <BackgroundMenu
+            isOpen={showBackgroundMenu}
+            onClose={() => setShowBackgroundMenu(false)}
+            settings={settings}
+            onSettingsUpdate={updateSettings}
+            onImageUpload={handleImageUpload}
+            onPresetSelect={handlePresetSelect}
+            onReset={handleBackgroundReset}
+            presets={getPresets()}
+          />
 
           {/* バックアップメニュー */}
           <button
@@ -392,76 +207,13 @@ function Header() {
             </svg>
           </button>
 
-          {showBackupMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                right: '3rem',
-                marginTop: '0.5rem',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                boxShadow: 'var(--shadow-lg)',
-                zIndex: 1000,
-                minWidth: '200px',
-                overflow: 'hidden'
-              }}
-            >
-              <button
-                onClick={handleExport}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  background: 'transparent',
-                  border: 'none',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  fontSize: '0.875rem',
-                  color: 'var(--text-primary)',
-                  borderBottom: '1px solid var(--border)'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--background)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '0.5rem'}}>
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7,10 12,15 17,10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                エクスポート ({memos.length}件)
-              </button>
-              
-              <button
-                onClick={handleImport}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  background: 'transparent',
-                  border: 'none',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  fontSize: '0.875rem',
-                  color: 'var(--text-primary)'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--background)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '0.5rem'}}>
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17,8 12,3 7,8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-                インポート
-              </button>
-            </div>
-          )}
+          <BackupMenu
+            isOpen={showBackupMenu}
+            onClose={() => setShowBackupMenu(false)}
+            memosCount={memos.length}
+            onExport={handleExport}
+            onImport={handleImport}
+          />
 
           {/* テーマ切り替え */}
           <button
@@ -493,36 +245,6 @@ function Header() {
         </div>
       </div>
       
-      {/* メニュー外クリックでメニューを閉じる */}
-      {(showBackupMenu || showBackgroundMenu || showFontMenu) && (
-        <button
-          type="button"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 999,
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            cursor: 'default'
-          }}
-          onClick={() => {
-            setShowBackupMenu(false);
-            setShowBackgroundMenu(false);
-            setShowFontMenu(false);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              setShowBackupMenu(false);
-              setShowBackgroundMenu(false);
-              setShowFontMenu(false);
-            }
-          }}
-        />
-      )}
     </header>
   );
 }

@@ -1,0 +1,102 @@
+/* TemplateSelector styles */
+.template-selector-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.template-selector-arrow {
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.template-selector-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.template-selector-dropdown {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  margin-top: 0;
+}
+
+.template-selector-dropdown.expanded {
+  max-height: 400px;
+  margin-top: 1rem;
+}
+
+.template-selector-content {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.template-selector-dropdown.expanded .template-selector-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.template-item {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s ease;
+  border-radius: 0;
+}
+
+.template-item:hover {
+  background-color: var(--primary-light);
+}
+
+.template-item:last-child {
+  border-bottom: none;
+}
+
+.template-item.first {
+  border-radius: 8px 8px 0 0;
+}
+
+.template-item.last {
+  border-radius: 0 0 8px 8px;
+}
+
+.template-header {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.template-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.template-indicator.note {
+  background-color: #10B981;
+}
+
+.template-indicator.wiki {
+  background-color: #F59E0B;
+}
+
+.template-description {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
