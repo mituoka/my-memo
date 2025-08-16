@@ -66,14 +66,6 @@ function MemoDetail() {
 
   return (
     <div className="memo-detail-container">
-      {/* 固定ヘッダー */}
-      <div className="memo-detail-header">
-        <div className="memo-detail-actions">
-          <button onClick={() => navigate('/')} className="btn btn-secondary">
-            ← 戻る
-          </button>
-        </div>
-      </div>
 
       {/* メインコンテンツ */}
       <article className="memo-detail-card">
@@ -162,6 +154,22 @@ function MemoDetail() {
         </div>
       )}
 
+      {/* アクションボタン */}
+      <div className="memo-actions">
+        <button 
+          onClick={() => navigate(`/memo/edit/${memo.id}`)} 
+          className="btn btn-primary btn-sm"
+        >
+          ✏️ 編集
+        </button>
+        <button 
+          onClick={() => setShowDeleteModal(true)} 
+          className="btn btn-danger btn-sm"
+        >
+          🗑️ 削除
+        </button>
+      </div>
+
       {/* ナビゲーション */}
       <nav className="memo-navigation">
         <button
@@ -196,22 +204,6 @@ function MemoDetail() {
           )}
         </button>
       </nav>
-
-      {/* 下部アクションボタン */}
-      <div className="memo-bottom-actions">
-        <button 
-          onClick={() => navigate(`/memo/edit/${memo.id}`)} 
-          className="btn btn-primary"
-        >
-          ✏️ 編集
-        </button>
-        <button 
-          onClick={() => setShowDeleteModal(true)} 
-          className="btn btn-danger"
-        >
-          🗑️ 削除
-        </button>
-      </div>
 
       {/* 削除確認モーダル */}
       <DeleteConfirmModal
