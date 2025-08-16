@@ -111,13 +111,37 @@
 /* Integrated memo detail actions within card */
 .memo-detail-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
-  margin-top: 2rem;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   border-top: 1px solid var(--border);
   background: var(--background);
   border-radius: 0 0 12px 12px;
+}
+
+/* Large action buttons for memo detail */
+.memo-action-btn {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  min-width: 140px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.memo-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.memo-action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Legacy support for external actions */
@@ -383,7 +407,6 @@
 
 /* Integrated memo detail images within card */
 .memo-detail-images {
-  margin-top: 2rem;
   padding: 1.5rem;
   border-top: 1px solid var(--border);
   background: var(--background);
@@ -632,13 +655,19 @@
   /* Integrated detail actions */
   .memo-detail-actions {
     flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
   }
   
   .memo-detail-actions .btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .memo-action-btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    min-width: auto;
   }
   
   .memo-detail-title {

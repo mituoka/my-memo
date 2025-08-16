@@ -237,13 +237,13 @@ function MemoDetail() {
         <div className="memo-detail-actions">
           <button 
             onClick={() => navigate(`/memo/edit/${memo.id}`)} 
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary btn-lg memo-action-btn"
           >
             ✏️ 編集
           </button>
           <button 
             onClick={() => setShowDeleteModal(true)} 
-            className="btn btn-danger btn-sm"
+            className="btn btn-danger btn-lg memo-action-btn"
           >
             🗑️ 削除
           </button>
