@@ -63,6 +63,29 @@ function MemoDetail() {
     setSelectedImageIndex(index);
     setShowImageViewer(true);
   };
+  
+  const downloadImage = (imageUrl: string, index: number, event: React.MouseEvent) => {
+    event.stopPropagation(); // 画像ビューアーが開かれないようにする
+    
+    try {
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      
+      // Generate filename
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `${memo.title.replace(/[^a-zA-Z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g, '_')}_${index + 1}_${timestamp}.jpg`;
+      
+      link.download = filename;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
 
   return (
     <div className="memo-detail-container">
@@ -132,9 +155,45 @@ function MemoDetail() {
                   loading="lazy"
                 />
                 <div className="memo-image-overlay">
-                  <span className="memo-image-counter">
-                    {index + 1} / {memo.images!.length}
-                  </span>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%'
+                  }}>
+                    <span className="memo-image-counter">
+                      {index + 1} / {memo.images!.length}
+                    </span>
+                    <button
+                      onClick={(e) => downloadImage(image, index, e)}
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        borderRadius: '6px',
+                        color: 'white',
+                        padding: '0.375rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s ease',
+                        backdropFilter: 'blur(4px)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(0, 0, 0, 0.9)';
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                      title="画像をダウンロード"
+                    >
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
