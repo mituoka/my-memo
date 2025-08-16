@@ -6,6 +6,18 @@ import { parseMarkdown } from '../utils/markdownUtils';
 import DeleteConfirmModal from '../components/modals/DeleteConfirmModal';
 import ImageViewerModal from '../components/modals/ImageViewerModal';
 
+// メモタイプのラベルを取得するヘルパー関数
+function getMemoTypeLabel(type?: string): string {
+  switch (type) {
+    case 'note':
+      return '📝 ノート';
+    case 'wiki':
+      return '📚 Wiki';
+    default:
+      return '📄 メモ';
+  }
+}
+
 function MemoDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -27,7 +39,7 @@ function MemoDetail() {
   
   const parsedContent = useMemo(() => {
     return memo ? parseMarkdown(memo.content) : '';
-  }, [memo?.content]);
+  }, [memo]);
 
   if (!memo) {
     return (
@@ -103,7 +115,7 @@ function MemoDetail() {
               🕒 更新: {getRelativeTime(memo.updatedAt)}
             </span>
             <span className={`memo-type-badge ${memo.type || 'memo'}`}>
-              {memo.type === 'note' ? '📝 ノート' : memo.type === 'wiki' ? '📚 Wiki' : '📄 メモ'}
+              {getMemoTypeLabel(memo.type)}
             </span>
           </div>
         </header>
@@ -142,9 +154,18 @@ function MemoDetail() {
             <div className={`memo-detail-images-grid ${memo.images.length === 1 ? 'single' : 'multiple'}`}>
               {memo.images.map((image, index) => (
                 <div 
-                  key={index} 
+                  key={`image-${memo.id}-${index}`}
                   className={`memo-detail-image-item ${memo.images!.length === 1 ? 'single' : 'multiple'}`}
                   onClick={() => handleImageClick(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleImageClick(index);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`画像 ${index + 1} を拡大表示`}
                   title="クリックで拡大表示"
                 >
                   <img
@@ -278,7 +299,7 @@ function MemoDetail() {
         <ImageViewerModal
           isOpen={showImageViewer}
           onClose={() => setShowImageViewer(false)}
-          images={memo.images}
+          images={[...memo.images]}
           initialIndex={selectedImageIndex}
           title={memo.title}
         />

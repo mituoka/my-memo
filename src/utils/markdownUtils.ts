@@ -1,5 +1,13 @@
+import DOMPurify from 'dompurify';
+
 export function parseMarkdown(content: string): string {
-  let html = content;
+  // まず入力をエスケープしてXSS攻撃を防ぐ
+  let html = content
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
 
   // 見出し（# ## ###）
   html = html.replace(/^### (.*$)/gm, '<h3 class="markdown-h3">$1</h3>');
@@ -19,10 +27,16 @@ export function parseMarkdown(content: string): string {
   html = html.replace(/```([^`]+)```/g, '<pre class="markdown-codeblock"><code>$1</code></pre>');
 
   // 引用（> text）
-  html = html.replace(/^> (.*$)/gm, '<blockquote class="markdown-quote">$1</blockquote>');
+  html = html.replace(/^&gt; (.*$)/gm, '<blockquote class="markdown-quote">$1</blockquote>');
 
-  // リンク（[text](url)）
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="markdown-link" target="_blank" rel="noopener noreferrer">$1</a>');
+  // リンク（[text](url)） - より安全な URL バリデーション
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+    // URLの基本的なバリデーション
+    if (url.match(/^https?:\/\/[^\s<>"']+$/)) {
+      return `<a href="${url}" class="markdown-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    }
+    return match; // 無効なURLはそのまま表示
+  });
 
   // リスト（- item または * item）
   html = html.replace(/^[-*] (.*$)/gm, '<li class="markdown-list-item">$1</li>');
@@ -35,7 +49,20 @@ export function parseMarkdown(content: string): string {
   // 改行の処理
   html = html.replace(/\n/g, '<br>');
 
-  return html;
+  // DOMPurifyでHTMLをサニタイズ
+  const sanitizedHtml = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      'h1', 'h2', 'h3', 'strong', 'em', 'code', 'pre', 'blockquote', 
+      'a', 'ul', 'ol', 'li', 'br'
+    ],
+    ALLOWED_ATTR: ['class', 'href', 'target', 'rel'],
+    ALLOW_DATA_ATTR: false,
+    FORBID_SCRIPT: true,
+    FORBID_TAGS: ['script', 'object', 'embed', 'link', 'style', 'iframe'],
+    STRIP_COMMENTS: true
+  });
+
+  return sanitizedHtml;
 }
 
 export function extractHeadings(content: string): { level: number; text: string; id: string }[] {

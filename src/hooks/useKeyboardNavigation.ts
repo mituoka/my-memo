@@ -4,6 +4,28 @@ import { useNavigate } from 'react-router-dom';
 export const useKeyboardNavigation = () => {
   const navigate = useNavigate();
 
+  const navigateToNextMemo = useCallback((direction: 'next' | 'prev') => {
+    const memoCards = Array.from(document.querySelectorAll('.memo-card')) as HTMLElement[];
+    if (memoCards.length === 0) return;
+
+    const currentIndex = memoCards.findIndex(card => 
+      card === document.activeElement || card.contains(document.activeElement)
+    );
+
+    let nextIndex = 0;
+    if (direction === 'next') {
+      nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % memoCards.length;
+    } else {
+      nextIndex = currentIndex === -1 ? 0 : currentIndex === 0 ? memoCards.length - 1 : currentIndex - 1;
+    }
+
+    const nextCard = memoCards[nextIndex];
+    if (nextCard) {
+      nextCard.focus();
+      nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, []);
+
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Cmd/Ctrl + K でグローバル検索にフォーカス
     if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
@@ -111,29 +133,7 @@ export const useKeyboardNavigation = () => {
         }
       }
     }
-  }, [navigate]);
-
-  const navigateToNextMemo = useCallback((direction: 'next' | 'prev') => {
-    const memoCards = Array.from(document.querySelectorAll('.memo-card')) as HTMLElement[];
-    if (memoCards.length === 0) return;
-
-    const currentIndex = memoCards.findIndex(card => 
-      card === document.activeElement || card.contains(document.activeElement)
-    );
-
-    let nextIndex = 0;
-    if (direction === 'next') {
-      nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % memoCards.length;
-    } else {
-      nextIndex = currentIndex === -1 ? 0 : currentIndex === 0 ? memoCards.length - 1 : currentIndex - 1;
-    }
-
-    const nextCard = memoCards[nextIndex];
-    if (nextCard) {
-      nextCard.focus();
-      nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, []);
+  }, [navigate, navigateToNextMemo]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
