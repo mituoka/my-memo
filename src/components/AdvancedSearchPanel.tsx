@@ -166,17 +166,25 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                 d={isSortExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
             </svg>
             並び替え
-            <span style={{
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
               background: sortSettings.field ? 'var(--primary)' : 'var(--text-muted)',
               color: 'white',
               fontSize: '0.75rem',
-              padding: '0.125rem 0.375rem',
-              borderRadius: '10px',
-              minWidth: '1rem',
-              textAlign: 'center'
+              padding: '0.25rem 0.5rem',
+              borderRadius: '12px',
+              whiteSpace: 'nowrap'
             }}>
-              {getSortLabel(sortSettings.field).charAt(0)}
-            </span>
+              <span>{getSortLabel(sortSettings.field)}</span>
+              {sortSettings.field && (
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" 
+                    d={sortSettings.order === 'asc' ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                </svg>
+              )}
+            </div>
           </button>
 
           {hasActiveFilters && (
@@ -228,83 +236,125 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
           
           <div style={{
             display: 'flex',
-            gap: '0.5rem',
+            gap: '0.75rem',
             flexWrap: 'wrap'
           }}>
             {['updatedAt', 'createdAt', 'title'].map(field => {
               const sortField = field as SortField;
-              const getSortIcon = (field: SortField) => {
-                const iconStyle = {
-                  width: '16px',
-                  height: '16px',
-                  flexShrink: 0
-                };
-
-                if (sortSettings.field !== field) {
-                  return (
-                    <svg style={{ ...iconStyle, opacity: 0.3 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                    </svg>
-                  );
-                }
-
-                if (sortSettings.order === 'asc') {
-                  return (
-                    <svg style={iconStyle} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                    </svg>
-                  );
-                }
-
-                return (
-                  <svg style={iconStyle} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                );
-              };
+              const isActive = sortSettings.field === sortField;
+              const isAscending = isActive && sortSettings.order === 'asc';
 
               return (
                 <button
                   key={field}
                   onClick={() => {
                     onSort(sortField);
-                    setIsSortExpanded(false); // 選択後に閉じる
+                    // 同じフィールドをもう一度クリックしても閉じないように変更
                   }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    padding: '0.75rem 1rem',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
+                    padding: '0.875rem 1.25rem',
                     fontSize: '0.875rem',
                     fontWeight: '500',
-                    border: '1px solid var(--border)',
-                    borderRadius: '6px',
-                    background: sortSettings.field === sortField ? 'var(--primary)' : 'var(--surface)',
-                    color: sortSettings.field === sortField ? 'white' : 'var(--text-primary)',
+                    border: `2px solid ${isActive ? 'var(--primary)' : 'var(--border)'}`,
+                    borderRadius: '8px',
+                    background: isActive ? 'var(--primary)' : 'var(--surface)',
+                    color: isActive ? 'white' : 'var(--text-primary)',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     whiteSpace: 'nowrap',
-                    minHeight: '44px',
+                    minHeight: '48px',
                     flex: '1 1 0',
-                    minWidth: 'fit-content'
+                    minWidth: 'fit-content',
+                    position: 'relative'
                   }}
                   onMouseEnter={(e) => {
-                    if (sortSettings.field !== sortField) {
+                    if (!isActive) {
                       e.currentTarget.style.background = 'var(--surface-hover)';
+                      e.currentTarget.style.borderColor = 'var(--primary)';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (sortSettings.field !== sortField) {
+                    if (!isActive) {
                       e.currentTarget.style.background = 'var(--surface)';
+                      e.currentTarget.style.borderColor = 'var(--border)';
                     }
                   }}
                 >
-                  <span style={{ lineHeight: 1 }}>{getSortLabel(sortField)}</span>
-                  {getSortIcon(sortField)}
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-start',
+                    gap: '0.125rem'
+                  }}>
+                    <span style={{ lineHeight: 1, fontWeight: '600' }}>
+                      {getSortLabel(sortField)}
+                    </span>
+                    {isActive && (
+                      <span style={{ 
+                        fontSize: '0.75rem', 
+                        opacity: 0.9,
+                        fontWeight: '400'
+                      }}>
+                        {field === 'title' 
+                        ? (isAscending ? '昇順 (A→Z)' : '降順 (Z→A)')
+                        : (isAscending ? '昇順 (古い順)' : '降順 (新しい順)')
+                      }
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'var(--surface)',
+                    border: isActive ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid var(--border)'
+                  }}>
+                    {!isActive ? (
+                      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{ opacity: 0.5 }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    ) : isAscending ? (
+                      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                      </svg>
+                    ) : (
+                      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </div>
                 </button>
               );
             })}
+          </div>
+          
+          {/* Instructions */}
+          <div style={{
+            marginTop: '1rem',
+            padding: '0.75rem',
+            background: 'var(--primary-light)',
+            borderRadius: '6px',
+            border: '1px solid var(--border)',
+            fontSize: '0.8125rem',
+            color: 'var(--text-secondary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            <svg width="16" height="16" fill="none" stroke="var(--primary)" viewBox="0 0 24 24" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>並び替え項目をクリックして昇順・降順を切り替えられます</span>
           </div>
         </div>
       )}
