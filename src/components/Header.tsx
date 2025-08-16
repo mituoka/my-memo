@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { useMemoStorage } from '../hooks/useMemoStorage';
 import { useBackup } from '../hooks/useBackup';
@@ -6,6 +7,7 @@ import { useBackground } from '../contexts/BackgroundContext';
 import { useFont } from '../contexts/FontContext';
 
 function Header() {
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { memos, importMemos } = useMemoStorage();
   const { exportToJSON, triggerImport } = useBackup();
@@ -85,7 +87,31 @@ function Header() {
           margin: 0,
           color: 'var(--text-primary)'
         }}>
-          <span>My Memo</span>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              font: 'inherit',
+              cursor: 'pointer',
+              padding: '0.5rem',
+              margin: '-0.5rem',
+              borderRadius: '6px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--primary-light)';
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+            title="ホームに戻る"
+          >
+            My Memo
+          </button>
         </h1>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', position: 'relative' }}>
