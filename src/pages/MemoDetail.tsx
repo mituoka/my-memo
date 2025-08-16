@@ -64,18 +64,6 @@ function MemoDetail() {
           <button onClick={() => navigate('/')} className="btn btn-secondary">
             ← 戻る
           </button>
-          <button 
-            onClick={() => navigate(`/memo/edit/${memo.id}`)} 
-            className="btn btn-primary"
-          >
-            ✏️ 編集
-          </button>
-          <button 
-            onClick={() => setShowDeleteModal(true)} 
-            className="btn btn-danger"
-          >
-            🗑️ 削除
-          </button>
         </div>
       </div>
 
@@ -123,6 +111,49 @@ function MemoDetail() {
         )}
       </article>
 
+      {/* 画像ギャラリー */}
+      {memo.images && memo.images.length > 0 ? (
+        <div className="memo-images">
+          <h3 className="memo-images-title">
+            🖼️ 画像 ({memo.images.length}枚)
+          </h3>
+          <div className={`memo-images-grid ${memo.images.length === 1 ? 'single' : 'multiple'}`}>
+            {memo.images.map((image, index) => (
+              <div 
+                key={index} 
+                className={`memo-image-item ${memo.images!.length === 1 ? 'single' : 'multiple'}`}
+                onClick={() => window.open(image, '_blank')}
+                title="クリックで拡大表示"
+              >
+                <img
+                  src={image}
+                  alt={`${memo.title} - 画像 ${index + 1}`}
+                  className="memo-image"
+                  loading="lazy"
+                />
+                <div className="memo-image-overlay">
+                  <span className="memo-image-counter">
+                    {index + 1} / {memo.images!.length}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="memo-images">
+          <div className="memo-image-placeholder">
+            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+            </svg>
+            <div>
+              <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500' }}>画像はありません</p>
+              <p style={{ margin: 0, fontSize: '0.875rem' }}>編集で画像を追加できます</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ナビゲーション */}
       <nav className="memo-navigation">
         <button
@@ -157,6 +188,22 @@ function MemoDetail() {
           )}
         </button>
       </nav>
+
+      {/* 下部アクションボタン */}
+      <div className="memo-bottom-actions">
+        <button 
+          onClick={() => navigate(`/memo/edit/${memo.id}`)} 
+          className="btn btn-primary"
+        >
+          ✏️ 編集
+        </button>
+        <button 
+          onClick={() => setShowDeleteModal(true)} 
+          className="btn btn-danger"
+        >
+          🗑️ 削除
+        </button>
+      </div>
 
       {/* 削除確認モーダル */}
       <DeleteConfirmModal
