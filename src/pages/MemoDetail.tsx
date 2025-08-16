@@ -132,102 +132,102 @@ function MemoDetail() {
             </div>
           </div>
         )}
-      </article>
 
-      {/* 画像ギャラリー */}
-      {memo.images && memo.images.length > 0 ? (
-        <div className="memo-images">
-          <h3 className="memo-images-title">
-            🖼️ 画像 ({memo.images.length}枚)
-          </h3>
-          <div className={`memo-images-grid ${memo.images.length === 1 ? 'single' : 'multiple'}`}>
-            {memo.images.map((image, index) => (
-              <div 
-                key={index} 
-                className={`memo-image-item ${memo.images!.length === 1 ? 'single' : 'multiple'}`}
-                onClick={() => handleImageClick(index)}
-                title="クリックで拡大表示"
-              >
-                <img
-                  src={image}
-                  alt={`${memo.title} - 画像 ${index + 1}`}
-                  className="memo-image"
-                  loading="lazy"
-                />
-                <div className="memo-image-overlay">
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    width: '100%'
-                  }}>
-                    <span className="memo-image-counter">
-                      {index + 1} / {memo.images!.length}
-                    </span>
-                    <button
-                      onClick={(e) => downloadImage(image, index, e)}
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                        borderRadius: '6px',
-                        color: 'white',
-                        padding: '0.375rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease',
-                        backdropFilter: 'blur(4px)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(0, 0, 0, 0.9)';
-                        e.currentTarget.style.transform = 'scale(1.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }}
-                      title="画像をダウンロード"
-                    >
-                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                      </svg>
-                    </button>
+        {/* 画像ギャラリー */}
+        {memo.images && memo.images.length > 0 ? (
+          <div className="memo-detail-images">
+            <h3 className="memo-detail-images-title">
+              🖼️ 画像 ({memo.images.length}枚)
+            </h3>
+            <div className={`memo-detail-images-grid ${memo.images.length === 1 ? 'single' : 'multiple'}`}>
+              {memo.images.map((image, index) => (
+                <div 
+                  key={index} 
+                  className={`memo-detail-image-item ${memo.images!.length === 1 ? 'single' : 'multiple'}`}
+                  onClick={() => handleImageClick(index)}
+                  title="クリックで拡大表示"
+                >
+                  <img
+                    src={image}
+                    alt={`${memo.title} - 画像 ${index + 1}`}
+                    className="memo-detail-image"
+                    loading="lazy"
+                  />
+                  <div className="memo-detail-image-overlay">
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '100%'
+                    }}>
+                      <span className="memo-detail-image-counter">
+                        {index + 1} / {memo.images!.length}
+                      </span>
+                      <button
+                        onClick={(e) => downloadImage(image, index, e)}
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.7)',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          borderRadius: '6px',
+                          color: 'white',
+                          padding: '0.375rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease',
+                          backdropFilter: 'blur(4px)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(0, 0, 0, 0.9)';
+                          e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        title="画像をダウンロード"
+                      >
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="memo-images">
-          <div className="memo-image-placeholder">
-            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-            </svg>
-            <div>
-              <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500' }}>画像はありません</p>
-              <p style={{ margin: 0, fontSize: '0.875rem' }}>編集で画像を追加できます</p>
+              ))}
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="memo-detail-images">
+            <div className="memo-detail-image-placeholder">
+              <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+              </svg>
+              <div>
+                <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500', fontSize: '0.875rem', color: 'var(--text-muted)' }}>画像はありません</p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>編集で画像を追加できます</p>
+              </div>
+            </div>
+          </div>
+        )}
 
-      {/* アクションボタン */}
-      <div className="memo-actions">
-        <button 
-          onClick={() => navigate(`/memo/edit/${memo.id}`)} 
-          className="btn btn-primary btn-sm"
-        >
-          ✏️ 編集
-        </button>
-        <button 
-          onClick={() => setShowDeleteModal(true)} 
-          className="btn btn-danger btn-sm"
-        >
-          🗑️ 削除
-        </button>
-      </div>
+        {/* アクションボタン */}
+        <div className="memo-detail-actions">
+          <button 
+            onClick={() => navigate(`/memo/edit/${memo.id}`)} 
+            className="btn btn-primary btn-sm"
+          >
+            ✏️ 編集
+          </button>
+          <button 
+            onClick={() => setShowDeleteModal(true)} 
+            className="btn btn-danger btn-sm"
+          >
+            🗑️ 削除
+          </button>
+        </div>
+      </article>
 
       {/* ナビゲーション */}
       <nav className="memo-navigation">
