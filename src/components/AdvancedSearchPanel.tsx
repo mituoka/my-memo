@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { SearchFilters } from '../hooks/useAdvancedSearch';
-import type { SortSettings, SortField, MemoType, ViewSettings, ViewMode } from '@/types';
+import type { SortSettings, SortField, MemoType, ViewSettings, ViewMode, CardLayoutSettings, CardLayout } from '@/types';
+import { CardLayoutSettings as CardLayoutSettingsComponent } from './CardLayoutSettings';
 
 interface AdvancedSearchPanelProps {
   readonly filters: SearchFilters;
@@ -17,6 +18,10 @@ interface AdvancedSearchPanelProps {
   readonly getSortLabel: (field: SortField) => string;
   readonly viewSettings: ViewSettings;
   readonly onViewModeChange: (mode: ViewMode) => void;
+  readonly cardLayoutSettings: CardLayoutSettings;
+  readonly onCardLayoutChange: (layout: CardLayout) => void;
+  readonly getCardLayoutLabel: (layout: CardLayout) => string;
+  readonly getCardLayoutDescription: (layout: CardLayout) => string;
 }
 
 export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
@@ -33,7 +38,11 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   onSort,
   getSortLabel,
   viewSettings,
-  onViewModeChange
+  onViewModeChange,
+  cardLayoutSettings,
+  onCardLayoutChange,
+  getCardLayoutLabel,
+  getCardLayoutDescription
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSortExpanded, setIsSortExpanded] = useState(false);
@@ -306,6 +315,14 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               </svg>
             </button>
           </div>
+
+          {/* カードレイアウト設定 */}
+          <CardLayoutSettingsComponent
+            cardLayoutSettings={cardLayoutSettings}
+            onCardLayoutChange={onCardLayoutChange}
+            getCardLayoutLabel={getCardLayoutLabel}
+            getCardLayoutDescription={getCardLayoutDescription}
+          />
 
           {hasActiveFilters && (
             <button

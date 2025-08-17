@@ -5,6 +5,7 @@ import { useMemoSort } from '../hooks/useMemoSort';
 import { useAdvancedSearch } from '../hooks/useAdvancedSearch';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useViewMode } from '../hooks/useViewMode';
+import { useCardLayout } from '../hooks/useCardLayout';
 import { AdvancedSearchPanel } from '../components/AdvancedSearchPanel';
 import { MemoGridSkeleton, SearchSkeleton } from '../components/common/SkeletonLoader';
 
@@ -14,6 +15,7 @@ function Home() {
   
   const { sortedMemos, sortSettings, updateSort, getSortLabel } = useMemoSort(memos);
   const { viewSettings, setViewMode } = useViewMode();
+  const { cardLayoutSettings, setCardLayout, getCardLayoutLabel, getCardLayoutDescription } = useCardLayout();
   
   const {
     filters,
@@ -132,6 +134,10 @@ function Home() {
               getSortLabel={getSortLabel}
               viewSettings={viewSettings}
               onViewModeChange={setViewMode}
+              cardLayoutSettings={cardLayoutSettings}
+              onCardLayoutChange={setCardLayout}
+              getCardLayoutLabel={getCardLayoutLabel}
+              getCardLayoutDescription={getCardLayoutDescription}
             />
           </div>
         )}
@@ -394,7 +400,7 @@ function Home() {
           {filteredMemos.map((memo, index) => (
             <div 
               key={memo.id} 
-              className={`card memo-card fade-in-up ${viewSettings.mode === 'list' ? 'memo-card-list' : 'memo-card-grid'}`} 
+              className={`card memo-card fade-in-up ${viewSettings.mode === 'list' ? 'memo-card-list' : 'memo-card-grid'} card-layout-${cardLayoutSettings.layout}`} 
               tabIndex={0}
               role="article"
               aria-labelledby={`memo-title-${memo.id}`}
@@ -502,6 +508,7 @@ function Home() {
                       
                       <h3 
                         id={`memo-title-${memo.id}`}
+                        className="memo-detail-title"
                         style={{
                           fontSize: '1.125rem',
                           fontWeight: '600',
@@ -567,7 +574,7 @@ function Home() {
                 
                 {/* Tags section */}
                 {memo.tags.length > 0 && (
-                  <div style={{ marginBottom: '1rem' }}>
+                  <div className="memo-card-tags" style={{ marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                       {memo.tags.map((tag) => (
                         <span key={tag} className="tag">
@@ -580,7 +587,7 @@ function Home() {
                 
                 {/* Images Preview or Placeholder - グリッド表示時のみ */}
                 {viewSettings.mode !== 'list' && (memo.images && memo.images.length > 0 ? (
-                  <div style={{ marginBottom: '1rem' }}>
+                  <div className="memo-detail-images" style={{ marginBottom: '1rem' }}>
                     {memo.images.length === 1 ? (
                       // Single image
                       <div style={{ position: 'relative' }}>
@@ -702,7 +709,7 @@ function Home() {
                 <div style={{ flex: 1 }}></div>
                 
                 {/* Fixed footer at bottom */}
-                <div style={{ 
+                <div className="memo-card-footer" style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
                   alignItems: 'center',

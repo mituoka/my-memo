@@ -86,3 +86,10 @@ export type ViewMode = 'grid-2' | 'grid-3' | 'list';
 export interface ViewSettings {
   readonly mode: ViewMode;
 }
+
+// カードレイアウト関連の型
+export type CardLayout = 'default' | 'compact' | 'detailed' | 'minimal';
+
+export interface CardLayoutSettings {
+  readonly layout: CardLayout;
+}
