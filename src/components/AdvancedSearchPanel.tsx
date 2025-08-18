@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { SearchFilters } from '../hooks/useAdvancedSearch';
 import type { SortSettings, SortField, MemoType, ViewSettings, ViewMode, CardLayoutSettings, CardLayout } from '@/types';
-import { CardLayoutSettings as CardLayoutSettingsComponent } from './CardLayoutSettings';
+import { CardLayoutSelector } from './CardLayoutSettings';
 
 interface AdvancedSearchPanelProps {
   readonly filters: SearchFilters;
@@ -96,260 +96,274 @@ export const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           gap: '0.5rem',
           flexWrap: 'wrap'
         }}>
-          {/* 詳細検索ボタン */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className={isExpanded ? 'bounce-in' : ''}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 0.75rem',
-              fontSize: '0.875rem',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
-              background: 'var(--background)',
-              color: 'var(--text-primary)',
-              cursor: 'pointer',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              flexShrink: 0,
-              transform: 'translateY(0)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--surface-hover)';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--background)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                d={isExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
-            </svg>
-            詳細検索
-            {hasActiveFilters && !isExpanded && (
-              <span style={{
-                background: 'var(--primary)',
-                color: 'white',
-                fontSize: '0.75rem',
-                padding: '0.125rem 0.375rem',
-                borderRadius: '10px',
-                minWidth: '1rem',
-                textAlign: 'center'
-              }}>
-                ●
-              </span>
-            )}
-          </button>
-
-          {/* 並び替えボタン */}
-          <button
-            onClick={() => setIsSortExpanded(!isSortExpanded)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 0.75rem',
-              fontSize: '0.875rem',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
-              background: 'var(--background)',
-              color: 'var(--text-primary)',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              flexShrink: 0
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--surface-hover)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--background)';
-            }}
-          >
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                d={isSortExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
-            </svg>
-            並び替え
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              background: sortSettings.field ? 'var(--primary)' : 'var(--text-muted)',
-              color: 'white',
-              fontSize: '0.75rem',
-              padding: '0.25rem 0.5rem',
-              borderRadius: '12px',
-              whiteSpace: 'nowrap'
-            }}>
-              <span>{getSortLabel(sortSettings.field)}</span>
-              {sortSettings.field && (
-                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" 
-                    d={sortSettings.order === 'asc' ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
-                </svg>
-              )}
-            </div>
-          </button>
-
-          {/* 表示形式切り替えボタン */}
+          {/* 左側のグループ：詳細検索ボタンと並び替えボタン */}
           <div style={{
             display: 'flex',
-            border: '1px solid var(--border)',
-            borderRadius: '6px',
-            overflow: 'hidden',
-            flexShrink: 0
+            alignItems: 'center',
+            gap: '0.5rem',
+            flex: 1
           }}>
+            {/* 詳細検索ボタン */}
             <button
-              onClick={() => onViewModeChange('grid-2')}
+              onClick={() => setIsExpanded(!isExpanded)}
+              className={isExpanded ? 'bounce-in' : ''}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                gap: '0.5rem',
                 padding: '0.5rem 0.75rem',
                 fontSize: '0.875rem',
-                border: 'none',
-                background: viewSettings.mode === 'grid-2' ? 'var(--primary)' : 'var(--background)',
-                color: viewSettings.mode === 'grid-2' ? 'white' : 'var(--text-primary)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                minWidth: '44px'
-              }}
-              onMouseEnter={(e) => {
-                if (viewSettings.mode !== 'grid-2') {
-                  e.currentTarget.style.background = 'var(--surface-hover)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (viewSettings.mode !== 'grid-2') {
-                  e.currentTarget.style.background = 'var(--background)';
-                }
-              }}
-              title="2列グリッド表示"
-            >
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-              </svg>
-            </button>
-            <button
-              onClick={() => onViewModeChange('grid-3')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0.5rem 0.75rem',
-                fontSize: '0.875rem',
-                border: 'none',
-                background: viewSettings.mode === 'grid-3' ? 'var(--primary)' : 'var(--background)',
-                color: viewSettings.mode === 'grid-3' ? 'white' : 'var(--text-primary)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                minWidth: '44px'
-              }}
-              onMouseEnter={(e) => {
-                if (viewSettings.mode !== 'grid-3') {
-                  e.currentTarget.style.background = 'var(--surface-hover)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (viewSettings.mode !== 'grid-3') {
-                  e.currentTarget.style.background = 'var(--background)';
-                }
-              }}
-              title="3列グリッド表示"
-            >
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <rect x="3" y="3" width="5" height="5"></rect>
-                <rect x="10" y="3" width="4" height="5"></rect>
-                <rect x="16" y="3" width="5" height="5"></rect>
-                <rect x="3" y="10" width="5" height="5"></rect>
-                <rect x="10" y="10" width="4" height="5"></rect>
-                <rect x="16" y="10" width="5" height="5"></rect>
-              </svg>
-            </button>
-            <button
-              onClick={() => onViewModeChange('list')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0.5rem 0.75rem',
-                fontSize: '0.875rem',
-                border: 'none',
-                background: viewSettings.mode === 'list' ? 'var(--primary)' : 'var(--background)',
-                color: viewSettings.mode === 'list' ? 'white' : 'var(--text-primary)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                minWidth: '44px'
-              }}
-              onMouseEnter={(e) => {
-                if (viewSettings.mode !== 'list') {
-                  e.currentTarget.style.background = 'var(--surface-hover)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (viewSettings.mode !== 'list') {
-                  e.currentTarget.style.background = 'var(--background)';
-                }
-              }}
-              title="リスト表示"
-            >
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <line x1="8" y1="6" x2="21" y2="6"></line>
-                <line x1="8" y1="12" x2="21" y2="12"></line>
-                <line x1="8" y1="18" x2="21" y2="18"></line>
-                <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                <line x1="3" y1="18" x2="3.01" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-
-          {/* カードレイアウト設定 */}
-          <CardLayoutSettingsComponent
-            cardLayoutSettings={cardLayoutSettings}
-            onCardLayoutChange={onCardLayoutChange}
-            getCardLayoutLabel={getCardLayoutLabel}
-            getCardLayoutDescription={getCardLayoutDescription}
-          />
-
-          {hasActiveFilters && (
-            <button
-              onClick={onClearFilters}
-              style={{
-                padding: '0.5rem 0.75rem',
-                fontSize: '0.875rem',
-                border: '1px solid var(--error)',
+                border: '1px solid var(--border)',
                 borderRadius: '6px',
-                background: 'none',
-                color: 'var(--error)',
+                background: 'var(--background)',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                flexShrink: 0,
+                transform: 'translateY(0)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--surface-hover)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--background)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d={isExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
+              </svg>
+              詳細検索
+              {hasActiveFilters && !isExpanded && (
+                <span style={{
+                  background: 'var(--primary)',
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  padding: '0.125rem 0.375rem',
+                  borderRadius: '10px',
+                  minWidth: '1rem',
+                  textAlign: 'center'
+                }}>
+                  ●
+                </span>
+              )}
+            </button>
+
+            {/* 並び替えボタン */}
+            <button
+              onClick={() => setIsSortExpanded(!isSortExpanded)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 0.75rem',
+                fontSize: '0.875rem',
+                border: '1px solid var(--border)',
+                borderRadius: '6px',
+                background: 'var(--background)',
+                color: 'var(--text-primary)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 flexShrink: 0
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--error)';
-                e.currentTarget.style.color = 'white';
+                e.currentTarget.style.background = 'var(--surface-hover)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'none';
-                e.currentTarget.style.color = 'var(--error)';
+                e.currentTarget.style.background = 'var(--background)';
               }}
             >
-              クリア
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d={isSortExpanded ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
+              </svg>
+              並び替え
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                background: sortSettings.field ? 'var(--primary)' : 'var(--text-muted)',
+                color: 'white',
+                fontSize: '0.75rem',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '12px',
+                whiteSpace: 'nowrap'
+              }}>
+                <span>{getSortLabel(sortSettings.field)}</span>
+                {sortSettings.field && (
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" 
+                      d={sortSettings.order === 'asc' ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                  </svg>
+                )}
+              </div>
             </button>
-          )}
+          </div>
+
+          {/* 右側のグループ：表示形式とレイアウト設定 */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            {/* 表示形式切り替えボタン */}
+            <div style={{
+              display: 'flex',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              overflow: 'hidden',
+              flexShrink: 0
+            }}>
+              <button
+                onClick={() => onViewModeChange('grid-2')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.875rem',
+                  border: 'none',
+                  background: viewSettings.mode === 'grid-2' ? 'var(--primary)' : 'var(--background)',
+                  color: viewSettings.mode === 'grid-2' ? 'white' : 'var(--text-primary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  minWidth: '44px'
+                }}
+                onMouseEnter={(e) => {
+                  if (viewSettings.mode !== 'grid-2') {
+                    e.currentTarget.style.background = 'var(--surface-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (viewSettings.mode !== 'grid-2') {
+                    e.currentTarget.style.background = 'var(--background)';
+                  }
+                }}
+                title="2列グリッド表示"
+              >
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                </svg>
+              </button>
+              <button
+                onClick={() => onViewModeChange('grid-3')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.875rem',
+                  border: 'none',
+                  background: viewSettings.mode === 'grid-3' ? 'var(--primary)' : 'var(--background)',
+                  color: viewSettings.mode === 'grid-3' ? 'white' : 'var(--text-primary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  minWidth: '44px'
+                }}
+                onMouseEnter={(e) => {
+                  if (viewSettings.mode !== 'grid-3') {
+                    e.currentTarget.style.background = 'var(--surface-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (viewSettings.mode !== 'grid-3') {
+                    e.currentTarget.style.background = 'var(--background)';
+                  }
+                }}
+                title="3列グリッド表示"
+              >
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <rect x="3" y="3" width="5" height="5"></rect>
+                  <rect x="10" y="3" width="4" height="5"></rect>
+                  <rect x="16" y="3" width="5" height="5"></rect>
+                  <rect x="3" y="10" width="5" height="5"></rect>
+                  <rect x="10" y="10" width="4" height="5"></rect>
+                  <rect x="16" y="10" width="5" height="5"></rect>
+                </svg>
+              </button>
+              <button
+                onClick={() => onViewModeChange('list')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.875rem',
+                  border: 'none',
+                  background: viewSettings.mode === 'list' ? 'var(--primary)' : 'var(--background)',
+                  color: viewSettings.mode === 'list' ? 'white' : 'var(--text-primary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  minWidth: '44px'
+                }}
+                onMouseEnter={(e) => {
+                  if (viewSettings.mode !== 'list') {
+                    e.currentTarget.style.background = 'var(--surface-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (viewSettings.mode !== 'list') {
+                    e.currentTarget.style.background = 'var(--background)';
+                  }
+                }}
+                title="リスト表示"
+              >
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            {/* カードレイアウト設定 */}
+            <CardLayoutSelector
+              cardLayoutSettings={cardLayoutSettings}
+              onCardLayoutChange={onCardLayoutChange}
+              getCardLayoutLabel={getCardLayoutLabel}
+              getCardLayoutDescription={getCardLayoutDescription}
+            />
+
+            {hasActiveFilters && (
+              <button
+                onClick={onClearFilters}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid var(--error)',
+                  borderRadius: '6px',
+                  background: 'none',
+                  color: 'var(--error)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  flexShrink: 0
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--error)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'none';
+                  e.currentTarget.style.color = 'var(--error)';
+                }}
+              >
+                クリア
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

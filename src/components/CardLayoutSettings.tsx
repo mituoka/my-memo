@@ -8,7 +8,7 @@ interface CardLayoutSelectorProps {
   readonly getCardLayoutDescription: (layout: CardLayout) => string;
 }
 
-export const CardLayoutSettings: React.FC<CardLayoutSelectorProps> = ({
+export const CardLayoutSelector: React.FC<CardLayoutSelectorProps> = ({
   cardLayoutSettings,
   onCardLayoutChange,
   getCardLayoutLabel,
