@@ -10,7 +10,6 @@ import EditMemo from './pages/EditMemo';
 import MemoDetail from './pages/MemoDetail';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { ShortcutsHelp } from './components/ShortcutsHelp';
-import { PWABanner } from './components/PWABanner';
 
 function App() {
   return (
@@ -79,7 +78,6 @@ function AppWithKeyboardShortcuts() {
         onClose={() => setIsShortcutsHelpOpen(false)}
       />
       
-      <PWABanner />
     </>
   );
 }
