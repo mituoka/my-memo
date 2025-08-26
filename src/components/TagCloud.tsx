@@ -1,7 +1,5 @@
-'use client';
-
 import { useTags } from '@/hooks/useMemoApi';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { memo } from 'react';
 import type { TagCloudProps } from '@/types';
 
@@ -51,7 +49,7 @@ function TagCloud({ selectedTag, onClearTag }: Readonly<TagCloudProps>) {
         {tags.map(tag => (
           <Link
             key={tag.id}
-            href={`/?tag=${encodeURIComponent(tag.name)}`}
+            to={`/?tag=${encodeURIComponent(tag.name)}`}
             className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${
               selectedTag === tag.name 
                 ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-sm' 

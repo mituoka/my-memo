@@ -29,12 +29,73 @@ export const useMemoStorage = () => {
     }
   }, []);
 
-  const saveMemos = (updatedMemos: Memo[]) => {
+  // 画像サイズを圧縮する関数
+  const compressImage = (imageDataUrl: string, maxSizeKB: number = 500): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+        
+        // アスペクト比を保持しながらサイズを調整
+        let { width, height } = img;
+        const maxDimension = 1200; // 最大サイズ
+        
+        if (width > height && width > maxDimension) {
+          height = (height * maxDimension) / width;
+          width = maxDimension;
+        } else if (height > maxDimension) {
+          width = (width * maxDimension) / height;
+          height = maxDimension;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // 品質を調整しながら圧縮
+        let quality = 0.8;
+        let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        
+        // 目標サイズに達するまで品質を下げる
+        while (compressedDataUrl.length > maxSizeKB * 1024 * 1.37 && quality > 0.1) { // base64は約1.37倍になる
+          quality -= 0.1;
+          compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        
+        resolve(compressedDataUrl);
+      };
+      img.src = imageDataUrl;
+    });
+  };
+
+  // 複数の画像を圧縮する関数
+  const compressImages = async (images: readonly string[] | undefined): Promise<string[]> => {
+    if (!images || images.length === 0) return [];
+    
+    const compressedImages: string[] = [];
+    for (const image of images) {
+      try {
+        const compressed = await compressImage(image);
+        compressedImages.push(compressed);
+      } catch (error) {
+        console.warn('画像圧縮に失敗しました:', error);
+        compressedImages.push(image); // 圧縮に失敗した場合は元の画像を使用
+      }
+    }
+    return compressedImages;
+  };
+
+  const saveMemos = async (updatedMemos: Memo[], autoCompress: boolean = true) => {
     setMemos(updatedMemos);
     
     if (typeof window !== 'undefined') {
       try {
-        const jsonString = JSON.stringify(updatedMemos);
+        let memosToSave = updatedMemos;
+        
+        // 最初に通常の保存を試行
+        let jsonString = JSON.stringify(memosToSave);
         
         if (jsonString.length > 4 * 1024 * 1024) {
           console.warn('⚠️ ローカルストレージの使用量が4MBを超えています。容量不足の可能性があります。');
@@ -43,6 +104,29 @@ export const useMemoStorage = () => {
         localStorage.setItem(STORAGE_KEY, jsonString);
       } catch (error) {
         console.error('localStorage保存エラー:', error);
+        if (error instanceof DOMException && error.name === 'QuotaExceededError' && autoCompress) {
+          try {
+            console.log('画像を圧縮して再試行します...');
+            
+            // 画像を圧縮して再試行
+            const compressedMemos = await Promise.all(
+              updatedMemos.map(async (memo: Memo) => ({
+                ...memo,
+                images: await compressImages(memo.images)
+              }))
+            );
+            
+            const compressedJsonString = JSON.stringify(compressedMemos);
+            localStorage.setItem(STORAGE_KEY, compressedJsonString);
+            setMemos(compressedMemos);
+            
+            alert('画像サイズが大きかったため、自動的に圧縮して保存しました。');
+            return;
+          } catch (compressionError) {
+            console.error('画像圧縮後の保存もエラー:', compressionError);
+          }
+        }
+        
         if (error instanceof DOMException && error.name === 'QuotaExceededError') {
           alert('画像のサイズが大きすぎるため、保存できませんでした。画像のサイズを小さくするか、枚数を減らしてください。');
         }
@@ -51,7 +135,7 @@ export const useMemoStorage = () => {
     }
   };
 
-  const addMemo = (memo: Omit<Memo, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addMemo = async (memo: Omit<Memo, 'id' | 'createdAt' | 'updatedAt'>) => {
     const now = new Date().toISOString();
     const newMemo: Memo = {
       ...memo,
@@ -64,18 +148,18 @@ export const useMemoStorage = () => {
     };
     
     const updatedMemos = [...memos, newMemo];
-    saveMemos(updatedMemos);
+    await saveMemos(updatedMemos);
     return newMemo;
   };
 
-  const updateMemo = (id: string, updates: Partial<Omit<Memo, 'id' | 'createdAt'>>) => {
-    const targetMemo = memos.find(memo => memo.id === id);
+  const updateMemo = async (id: string, updates: Partial<Omit<Memo, 'id' | 'createdAt'>>) => {
+    const targetMemo = memos.find((memo: Memo) => memo.id === id);
     if (!targetMemo) {
       console.error('対象のメモが見つかりません:', id);
       return;
     }
     
-    const updatedMemos = memos.map(memo => {
+    const updatedMemos = memos.map((memo: Memo) => {
       if (memo.id === id) {
         return { 
           ...memo, 
@@ -86,47 +170,47 @@ export const useMemoStorage = () => {
       return memo;
     });
     
-    saveMemos(updatedMemos);
+    await saveMemos(updatedMemos);
   };
 
-  const deleteMemo = (id: string) => {
-    const updatedMemos = memos.filter(memo => memo.id !== id);
-    saveMemos(updatedMemos);
+  const deleteMemo = async (id: string) => {
+    const updatedMemos = memos.filter((memo: Memo) => memo.id !== id);
+    await saveMemos(updatedMemos);
   };
 
   const getMemo = (id: string) => {
-    return memos.find(memo => memo.id === id);
+    return memos.find((memo: Memo) => memo.id === id);
   };
 
   const getAllTags = () => {
     const tagsSet = new Set<string>();
-    memos.forEach(memo => {
-      memo.tags.forEach(tag => tagsSet.add(tag));
+    memos.forEach((memo: Memo) => {
+      memo.tags.forEach((tag: string) => tagsSet.add(tag));
     });
     return Array.from(tagsSet);
   };
 
-  const importMemos = (importedMemos: Memo[], replaceAll: boolean = false) => {
+  const importMemos = async (importedMemos: Memo[], replaceAll: boolean = false) => {
     let updatedMemos: Memo[];
     
     if (replaceAll) {
       updatedMemos = importedMemos;
     } else {
-      const existingIds = new Set(memos.map(memo => memo.id));
-      const newMemos = importedMemos.filter(memo => !existingIds.has(memo.id));
+      const existingIds = new Set(memos.map((memo: Memo) => memo.id));
+      const newMemos = importedMemos.filter((memo: Memo) => !existingIds.has(memo.id));
       updatedMemos = [...memos, ...newMemos];
     }
     
-    saveMemos(updatedMemos);
+    await saveMemos(updatedMemos);
     return updatedMemos.length - memos.length;
   };
 
-  const clearAllMemos = () => {
-    saveMemos([]);
+  const clearAllMemos = async () => {
+    await saveMemos([]);
   };
 
-  const togglePinMemo = (id: string) => {
-    const updatedMemos = memos.map(memo => {
+  const togglePinMemo = async (id: string) => {
+    const updatedMemos = memos.map((memo: Memo) => {
       if (memo.id === id) {
         return {
           ...memo,
@@ -136,7 +220,7 @@ export const useMemoStorage = () => {
       }
       return memo;
     });
-    saveMemos(updatedMemos);
+    await saveMemos(updatedMemos);
   };
 
   return {

@@ -44,7 +44,7 @@ function AppWithKeyboardShortcuts() {
       sessionStorage.removeItem('spa-path');
       // React Routerのコンポーネントがマウントされた後に実行
       setTimeout(() => {
-        window.history.replaceState(null, null, '/my-memo/' + path);
+        window.history.replaceState(null, '', '/my-memo/' + path);
         window.dispatchEvent(new PopStateEvent('popstate'));
       }, 0);
     }

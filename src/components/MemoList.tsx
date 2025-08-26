@@ -1,8 +1,6 @@
-'use client';
-
 import { useMemos } from '@/hooks/useMemoApi';
 import { useState, useMemo, memo } from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import type { MemoListProps } from '@/types';
 
 function MemoList({ selectedTag }: Readonly<MemoListProps>) {
@@ -72,7 +70,7 @@ function MemoList({ selectedTag }: Readonly<MemoListProps>) {
           {filteredMemos.map((memo) => (
             <Link 
               key={memo.id} 
-              href={`/memo/${memo.id}`}
+              to={`/memo/${memo.id}`}
             className="block rounded-lg hover:shadow-md transition-shadow duration-200"
             style={{background: 'var(--background)', borderColor: 'var(--custom-secondary)', borderWidth: 1, borderStyle: 'solid'}} 
             >

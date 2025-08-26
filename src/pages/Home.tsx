@@ -35,9 +35,9 @@ function Home() {
   // キーボードナビゲーションを有効化
   useKeyboardNavigation();
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     if (window.confirm(`「${title}」を削除しますか？`)) {
-      deleteMemo(id);
+      await deleteMemo(id);
     }
   };
 
@@ -397,7 +397,7 @@ function Home() {
       ) : (
         // Memo Grid/List
         <div className={`view-${viewSettings.mode}`}>
-          {filteredMemos.map((memo, index) => (
+          {filteredMemos.map((memo: any, index: number) => (
             <div 
               key={memo.id} 
               className={`card memo-card fade-in-up ${viewSettings.mode === 'list' ? 'memo-card-list' : 'memo-card-grid'} card-layout-${cardLayoutSettings.layout}`} 
@@ -576,7 +576,7 @@ function Home() {
                 {memo.tags.length > 0 && (
                   <div className="memo-card-tags" style={{ marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      {memo.tags.map((tag) => (
+                      {memo.tags.map((tag: string) => (
                         <span key={tag} className="tag">
                           {tag}
                         </span>
@@ -611,7 +611,7 @@ function Home() {
                         gap: '0.5rem',
                         position: 'relative'
                       }}>
-                        {memo.images.slice(0, 4).map((image, index) => (
+                        {memo.images.slice(0, 4).map((image: string, index: number) => (
                           <div key={index} style={{ position: 'relative' }}>
                             <img
                               src={image}
@@ -649,7 +649,7 @@ function Home() {
                       </div>
                     )}
                   </div>
-                ) : viewSettings.mode !== 'list' ? (
+                ) : (viewSettings.mode === 'grid-2' || viewSettings.mode === 'grid-3') ? (
                   // Type-based placeholder - compact version after tags (グリッド表示時のみ)
                   <div style={{ 
                     marginBottom: '1rem',

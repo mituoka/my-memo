@@ -57,7 +57,7 @@ function MemoDetail() {
     
     setIsDeleting(true);
     try {
-      deleteMemo(memo.id);
+      await deleteMemo(memo.id);
       setShowDeleteModal(false);
       navigate('/');
     } catch (error) {

@@ -1,7 +1,5 @@
-'use client';
-
 import React, { memo } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useFont } from '../contexts/FontContext';
 import { useCacheManager } from '../hooks/useCacheManager';
 
@@ -16,12 +14,12 @@ function SettingsSidebar({ isOpen, onClose }: SettingsSidebarProps) {
     setDateString(new Date().toLocaleDateString('ja-JP'));
   }, []);
   const {
-    theme, setTheme, customColors, setCustomColors,
+    theme, setTheme,
     // 背景画像関連のstate削除
   } = useTheme();
   
   const { currentFont, setFont, fontOptions } = useFont();
-  const { cacheInfo, isRefreshing, clearCache, forceRefresh, checkForUpdates } = useCacheManager();
+  const { cacheInfo, isRefreshing, forceRefresh, checkForUpdates } = useCacheManager();
 
   const getThemeName = (currentTheme: string) => {
     switch (currentTheme) {
@@ -126,31 +124,6 @@ function SettingsSidebar({ isOpen, onClose }: SettingsSidebarProps) {
                   )}
                 </button>
 
-                {/* カスタムテーマ */}
-                <button
-                  onClick={() => setTheme('custom')}
-                  className={`relative flex flex-col items-center p-3 rounded-lg border-2 transition-all hover:scale-105 ${
-                    theme === 'custom'
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 custom:bg-purple-900/20 custom:border-purple-500'
-                      : 'border-gray-200 dark:border-gray-700 custom:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 custom:hover:border-gray-600'
-                  }`}
-                >
-                  {/* カラーサークル（動的に色を反映） */}
-                  <div 
-                    className="w-8 h-8 rounded-full border-2 border-purple-400 shadow-sm mb-2"
-                    style={{ 
-                      background: `linear-gradient(45deg, ${customColors.primary}, ${customColors.secondary}, ${customColors.accent})` 
-                    }}
-                  ></div>
-                  <span className="text-xs text-gray-900 dark:text-white custom:text-white">カスタム</span>
-                  {theme === 'custom' && (
-                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 custom:bg-purple-500 rounded-full flex items-center justify-center">
-                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
               </div>
               
             <p className="text-xs text-gray-500 dark:text-gray-400 custom:text-gray-400">
@@ -159,110 +132,6 @@ function SettingsSidebar({ isOpen, onClose }: SettingsSidebarProps) {
 
             </div>
 
-            {/* カスタムテーマのカラーパレット */}
-            {theme === 'custom' && (
-              <div className="mt-6 space-y-4">
-                <h4 className="text-sm font-medium text-gray-900 dark:text-white custom:text-white">カスタムカラー設定</h4>
-                
-                <div className="space-y-3">
-                  {/* Primary Color */}
-                  <div className="flex items-center space-x-3">
-                    <label htmlFor="primary-color" className="text-sm text-gray-600 dark:text-gray-400 custom:text-gray-400 w-20">Primary:</label>
-                    <input
-                      id="primary-color"
-                      type="color"
-                      value={customColors.primary}
-                      onChange={(e) => setCustomColors({
-                        ...customColors,
-                        primary: e.target.value
-                      })}
-                      className="w-10 h-8 rounded border-2 border-gray-300 dark:border-gray-600 custom:border-gray-600 cursor-pointer"
-                    />
-                    <span className="text-xs font-mono text-gray-500 dark:text-gray-400 custom:text-gray-400">
-                      {customColors.primary}
-                    </span>
-                  </div>
-
-                  {/* Secondary Color */}
-                  <div className="flex items-center space-x-3">
-                    <label htmlFor="secondary-color" className="text-sm text-gray-600 dark:text-gray-400 custom:text-gray-400 w-20">Secondary:</label>
-                    <input
-                      id="secondary-color"
-                      type="color"
-                      value={customColors.secondary}
-                      onChange={(e) => setCustomColors({
-                        ...customColors,
-                        secondary: e.target.value
-                      })}
-                      className="w-10 h-8 rounded border-2 border-gray-300 dark:border-gray-600 custom:border-gray-600 cursor-pointer"
-                    />
-                    <span className="text-xs font-mono text-gray-500 dark:text-gray-400 custom:text-gray-400">
-                      {customColors.secondary}
-                    </span>
-                  </div>
-
-                  {/* Accent Color */}
-                  <div className="flex items-center space-x-3">
-                    <label htmlFor="accent-color" className="text-sm text-gray-600 dark:text-gray-400 custom:text-gray-400 w-20">Accent:</label>
-                    <input
-                      id="accent-color"
-                      type="color"
-                      value={customColors.accent}
-                      onChange={(e) => setCustomColors({
-                        ...customColors,
-                        accent: e.target.value
-                      })}
-                      className="w-10 h-8 rounded border-2 border-gray-300 dark:border-gray-600 custom:border-gray-600 cursor-pointer"
-                    />
-                    <span className="text-xs font-mono text-gray-500 dark:text-gray-400 custom:text-gray-400">
-                      {customColors.accent}
-                    </span>
-                  </div>
-                </div>
-
-                {/* プリセットカラーパレット */}
-                <div className="space-y-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 custom:text-gray-400">プリセット:</span>
-                  <div className="grid grid-cols-3 gap-2">
-                    {/* パープル系 */}
-                    <button
-                      onClick={() => setCustomColors({
-                        primary: '#8b5cf6',
-                        secondary: '#a78bfa',
-                        accent: '#10b981'
-                      })}
-                      className="h-8 rounded border-2 border-gray-300 dark:border-gray-600 custom:border-gray-600 hover:border-gray-400 transition-colors"
-                      style={{ background: 'linear-gradient(45deg, #8b5cf6, #a78bfa, #10b981)' }}
-                      title="パープル系"
-                    />
-                    
-                    {/* ブルー系 */}
-                    <button
-                      onClick={() => setCustomColors({
-                        primary: '#3b82f6',
-                        secondary: '#60a5fa',
-                        accent: '#f59e0b'
-                      })}
-                      className="h-8 rounded border-2 border-gray-300 dark:border-gray-600 custom:border-gray-600 hover:border-gray-400 transition-colors"
-                      style={{ background: 'linear-gradient(45deg, #3b82f6, #60a5fa, #f59e0b)' }}
-                      title="ブルー系"
-                    />
-                    
-                    {/* レッド系 */}
-                    <button
-                      onClick={() => setCustomColors({
-                        primary: '#ef4444',
-                        secondary: '#f87171',
-                        accent: '#22c55e'
-                      })}
-                      className="h-8 rounded border-2 border-gray-300 dark:border-gray-600 custom:border-gray-600 hover:border-gray-400 transition-colors"
-                      style={{ background: 'linear-gradient(45deg, #ef4444, #f87171, #22c55e)' }}
-                      title="レッド系"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
             
             {/* フォント設定 */}
             <div className="mt-6 space-y-3">

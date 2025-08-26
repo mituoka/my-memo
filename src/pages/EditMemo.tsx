@@ -89,7 +89,7 @@ function EditMemo() {
     };
 
     try {
-      updateMemo(id, memoData);
+      await updateMemo(id, memoData);
       
       // Success animation before navigation
       const form = e.currentTarget as HTMLFormElement;

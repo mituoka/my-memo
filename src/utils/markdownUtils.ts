@@ -57,9 +57,7 @@ export function parseMarkdown(content: string): string {
     ],
     ALLOWED_ATTR: ['class', 'href', 'target', 'rel'],
     ALLOW_DATA_ATTR: false,
-    FORBID_SCRIPT: true,
-    FORBID_TAGS: ['script', 'object', 'embed', 'link', 'style', 'iframe'],
-    STRIP_COMMENTS: true
+    FORBID_TAGS: ['script', 'object', 'embed', 'link', 'style', 'iframe']
   });
 
   return sanitizedHtml;

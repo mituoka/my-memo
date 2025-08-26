@@ -67,7 +67,7 @@ function NewMemo() {
     };
 
     try {
-      addMemo(memoData);
+      await addMemo(memoData);
       
       // Success animation before navigation
       const form = e.currentTarget as HTMLFormElement;
@@ -78,7 +78,7 @@ function NewMemo() {
       }, 200);
     } catch (error) {
       console.error('Failed to save memo:', error);
-      setErrors({ submit: 'メモの保存に失敗しました' });
+      setErrors({ submit: 'メモの保存に失敗しました。画像のサイズが大きすぎる可能性があります。' });
       setIsSaving(false);
     }
   };
@@ -88,7 +88,7 @@ function NewMemo() {
       e.preventDefault();
       const tag = tagInput.trim();
       if (tag && !formData.tags.includes(tag)) {
-        setFormData(prev => ({
+        setFormData((prev: typeof formData) => ({
           ...prev,
           tags: [...prev.tags, tag]
         }));
@@ -98,9 +98,9 @@ function NewMemo() {
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev: typeof formData) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag: string) => tag !== tagToRemove)
     }));
   };
 
@@ -108,13 +108,13 @@ function NewMemo() {
     const files = e.target.files;
     if (!files) return;
 
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file: File) => {
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (event) => {
           const result = event.target?.result as string;
           if (result) {
-            setFormData(prev => ({
+            setFormData((prev: typeof formData) => ({
               ...prev,
               images: [...prev.images, result]
             }));
@@ -126,14 +126,16 @@ function NewMemo() {
   };
 
   const removeImage = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: typeof formData) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index)
+      images: prev.images.filter((_: string, i: number) => i !== index)
     }));
+    // 画像を削除した際にエラーをクリア
+    setErrors((prev: typeof errors) => ({ ...prev, submit: '' }));
   };
 
   const applyTemplate = (template: Template) => {
-    setFormData(prev => ({
+    setFormData((prev: typeof formData) => ({
       ...prev,
       content: template.content
     }));
@@ -192,13 +194,13 @@ function NewMemo() {
                   minWidth: '80px',
                   justifyContent: 'center'
                 }}
-                onMouseEnter={(e) => {
+                onMouseEnter={(e: React.MouseEvent<HTMLLabelElement>) => {
                   if (formData.type !== type) {
                     e.currentTarget.style.borderColor = 'var(--primary)';
                     e.currentTarget.style.backgroundColor = 'var(--primary-light)';
                   }
                 }}
-                onMouseLeave={(e) => {
+                onMouseLeave={(e: React.MouseEvent<HTMLLabelElement>) => {
                   if (formData.type !== type) {
                     e.currentTarget.style.borderColor = 'var(--border)';
                     e.currentTarget.style.backgroundColor = 'transparent';
@@ -210,7 +212,7 @@ function NewMemo() {
                   name="type"
                   value={type}
                   checked={formData.type === type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as MemoType }))}
+                  onChange={(e) => setFormData((prev: typeof formData) => ({ ...prev, type: e.target.value as MemoType }))}
                   style={{ display: 'none' }}
                 />
                 <div style={{
@@ -245,7 +247,7 @@ function NewMemo() {
             ref={titleRef}
             type="text"
             value={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            onChange={(e) => setFormData((prev: typeof formData) => ({ ...prev, title: e.target.value }))}
             className={`input ${errors.title ? 'shake' : ''}`}
             placeholder="メモのタイトルを入力"
             style={{
@@ -276,7 +278,7 @@ function NewMemo() {
           </label>
           <textarea
             value={formData.content}
-            onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+            onChange={(e) => setFormData((prev: typeof formData) => ({ ...prev, content: e.target.value }))}
             className="input textarea"
             placeholder="詳細な内容を入力（任意）"
             rows={8}
@@ -327,7 +329,7 @@ function NewMemo() {
               gap: '0.5rem',
               marginTop: '0.75rem'
             }}>
-              {formData.tags.map((tag, index) => (
+              {formData.tags.map((tag: string, index: number) => (
                 <div 
                   key={tag}
                   className="tag bounce-in"
@@ -353,10 +355,10 @@ function NewMemo() {
                       opacity: 0.7,
                       transition: 'opacity 0.2s ease'
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.opacity = '1';
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.opacity = '0.7';
                     }}
                   >
@@ -387,12 +389,12 @@ function NewMemo() {
             background: 'var(--background)',
             transition: 'all 0.2s ease'
           }}
-          onDragOver={(e) => {
+          onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             e.currentTarget.style.borderColor = 'var(--primary)';
             e.currentTarget.style.background = 'var(--primary-light)';
           }}
-          onDragLeave={(e) => {
+          onDragLeave={(e: React.DragEvent<HTMLDivElement>) => {
             e.currentTarget.style.borderColor = 'var(--border)';
             e.currentTarget.style.background = 'var(--background)';
           }}
@@ -432,7 +434,7 @@ function NewMemo() {
               gap: '1rem',
               marginTop: '1rem'
             }}>
-              {formData.images.map((image, index) => (
+              {formData.images.map((image: string, index: number) => (
                 <div
                   key={index}
                   className="bounce-in"
@@ -474,10 +476,10 @@ function NewMemo() {
                       boxShadow: 'var(--shadow)',
                       transition: 'all 0.2s ease'
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.transform = 'scale(1.1)';
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >

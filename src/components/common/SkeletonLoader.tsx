@@ -5,13 +5,15 @@ interface SkeletonProps {
   readonly height?: string | number;
   readonly borderRadius?: string | number;
   readonly className?: string;
+  readonly style?: React.CSSProperties;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({
   width = '100%',
   height = '1rem',
   borderRadius = '4px',
-  className = ''
+  className = '',
+  style
 }) => (
   <div
     className={`skeleton ${className}`}
@@ -21,7 +23,8 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       borderRadius,
       background: 'var(--skeleton-base)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      ...style
     }}
   />
 );
