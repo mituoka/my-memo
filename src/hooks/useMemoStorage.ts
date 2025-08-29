@@ -131,13 +131,24 @@ export const useMemoStorage = () => {
           try {
             console.log('画像を圧縮して再試行します...');
             
-            // より積極的な圧縮を実施
-            const compressedMemos = await Promise.all(
-              updatedMemos.map(async (memo: Memo) => ({
-                ...memo,
-                images: await compressImages(memo.images)
-              }))
-            );
+            // より積極的な圧縮を実施（エラー処理を強化）
+            const compressedMemos: Memo[] = [];
+            for (const memo of updatedMemos) {
+              try {
+                const compressedImages = await compressImages(memo.images);
+                compressedMemos.push({
+                  ...memo,
+                  images: compressedImages
+                });
+              } catch (error) {
+                console.warn('メモの画像圧縮でエラー:', error);
+                // 画像圧縮に失敗した場合は画像を削除
+                compressedMemos.push({
+                  ...memo,
+                  images: []
+                });
+              }
+            }
             
             let compressedJsonString = JSON.stringify(compressedMemos);
             
@@ -147,7 +158,7 @@ export const useMemoStorage = () => {
               
               const furtherReducedMemos = compressedMemos.map(memo => ({
                 ...memo,
-                images: memo.images.slice(0, Math.max(1, Math.floor(3 * memo.images.length / 4))) // 画像数を3/4に制限
+                images: memo.images ? memo.images.slice(0, Math.max(1, Math.floor(3 * memo.images.length / 4))) : [] // 画像数を3/4に制限
               }));
               
               compressedJsonString = JSON.stringify(furtherReducedMemos);
@@ -156,6 +167,7 @@ export const useMemoStorage = () => {
             localStorage.setItem(STORAGE_KEY, compressedJsonString);
             setMemos(JSON.parse(compressedJsonString));
             
+            console.log('✅ 画像圧縮保存が成功しました');
             alert('画像サイズが大きかったため、自動的に圧縮して保存しました。\n一部の画像が削除された可能性があります。');
             return;
           } catch (compressionError) {
@@ -172,6 +184,7 @@ export const useMemoStorage = () => {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(noImageMemos));
               setMemos(noImageMemos);
               
+              console.log('✅ 画像削除保存が成功しました');
               alert('ローカルストレージの容量が不足したため、すべての画像を削除して保存しました。');
               return;
             } catch (finalError) {
@@ -180,6 +193,7 @@ export const useMemoStorage = () => {
           }
         }
         
+        // この時点で到達する場合は、画像圧縮も含めてすべての保存方法が失敗した場合のみ
         if (error instanceof DOMException && error.name === 'QuotaExceededError') {
           alert('画像のサイズが大きすぎるため、保存できませんでした。画像のサイズを小さくするか、枚数を減らしてください。');
         }
