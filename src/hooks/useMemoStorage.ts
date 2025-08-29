@@ -30,42 +30,65 @@ export const useMemoStorage = () => {
   }, []);
 
   // 画像サイズを圧縮する関数
-  const compressImage = (imageDataUrl: string, maxSizeKB: number = 500): Promise<string> => {
-    return new Promise((resolve) => {
+  const compressImage = (imageDataUrl: string, maxSizeKB: number = 300): Promise<string> => {
+    return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
-        
-        // アスペクト比を保持しながらサイズを調整
-        let { width, height } = img;
-        const maxDimension = 1200; // 最大サイズ
-        
-        if (width > height && width > maxDimension) {
-          height = (height * maxDimension) / width;
-          width = maxDimension;
-        } else if (height > maxDimension) {
-          width = (width * maxDimension) / height;
-          height = maxDimension;
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d')!;
+          
+          // アスペクト比を保持しながらサイズを調整（より積極的に圧縮）
+          let { width, height } = img;
+          let maxDimension = 800; // 最大サイズをより小さく
+          
+          // 元の画像サイズに応じて最大サイズを調整
+          if (width * height > 1000000) { // 1MP以上の場合はさらに小さく
+            maxDimension = 600;
+          }
+          
+          if (width > height && width > maxDimension) {
+            height = (height * maxDimension) / width;
+            width = maxDimension;
+          } else if (height > maxDimension) {
+            width = (width * maxDimension) / height;
+            height = maxDimension;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // 品質を調整しながら圧縮
+          let quality = 0.7; // 初期品質を下げる
+          let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+          
+          // 目標サイズに達するまで品質を下げる
+          while (compressedDataUrl.length > maxSizeKB * 1024 * 1.37 && quality > 0.05) {
+            quality -= 0.05;
+            compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          
+          // それでも大きすぎる場合はサイズをさらに縮小
+          if (compressedDataUrl.length > maxSizeKB * 1024 * 1.37 && maxDimension > 300) {
+            maxDimension = Math.max(300, maxDimension * 0.8);
+            width = Math.min(width, maxDimension);
+            height = Math.min(height, maxDimension);
+            
+            canvas.width = width;
+            canvas.height = height;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, width, height);
+            compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
+          }
+          
+          resolve(compressedDataUrl);
+        } catch (error) {
+          reject(error);
         }
-        
-        canvas.width = width;
-        canvas.height = height;
-        
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        // 品質を調整しながら圧縮
-        let quality = 0.8;
-        let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        
-        // 目標サイズに達するまで品質を下げる
-        while (compressedDataUrl.length > maxSizeKB * 1024 * 1.37 && quality > 0.1) { // base64は約1.37倍になる
-          quality -= 0.1;
-          compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        }
-        
-        resolve(compressedDataUrl);
       };
+      img.onerror = () => reject(new Error('画像の読み込みに失敗しました'));
       img.src = imageDataUrl;
     });
   };
@@ -108,7 +131,7 @@ export const useMemoStorage = () => {
           try {
             console.log('画像を圧縮して再試行します...');
             
-            // 画像を圧縮して再試行
+            // より積極的な圧縮を実施
             const compressedMemos = await Promise.all(
               updatedMemos.map(async (memo: Memo) => ({
                 ...memo,
@@ -116,14 +139,44 @@ export const useMemoStorage = () => {
               }))
             );
             
-            const compressedJsonString = JSON.stringify(compressedMemos);
-            localStorage.setItem(STORAGE_KEY, compressedJsonString);
-            setMemos(compressedMemos);
+            let compressedJsonString = JSON.stringify(compressedMemos);
             
-            alert('画像サイズが大きかったため、自動的に圧縮して保存しました。');
+            // それでも大きすぎる場合は、さらに画像を削減
+            if (compressedJsonString.length > 5 * 1024 * 1024) {
+              console.warn('圧縮後もサイズが大きすぎます。画像数を制限します。');
+              
+              const furtherReducedMemos = compressedMemos.map(memo => ({
+                ...memo,
+                images: memo.images.slice(0, Math.max(1, Math.floor(3 * memo.images.length / 4))) // 画像数を3/4に制限
+              }));
+              
+              compressedJsonString = JSON.stringify(furtherReducedMemos);
+            }
+            
+            localStorage.setItem(STORAGE_KEY, compressedJsonString);
+            setMemos(JSON.parse(compressedJsonString));
+            
+            alert('画像サイズが大きかったため、自動的に圧縮して保存しました。\n一部の画像が削除された可能性があります。');
             return;
           } catch (compressionError) {
             console.error('画像圧縮後の保存もエラー:', compressionError);
+            
+            // 最後の手段：画像を全て削除して保存を試行
+            try {
+              console.log('最後の手段：画像を削除して保存を試行します...');
+              const noImageMemos = updatedMemos.map(memo => ({
+                ...memo,
+                images: []
+              }));
+              
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(noImageMemos));
+              setMemos(noImageMemos);
+              
+              alert('ローカルストレージの容量が不足したため、すべての画像を削除して保存しました。');
+              return;
+            } catch (finalError) {
+              console.error('画像削除後も保存に失敗:', finalError);
+            }
           }
         }
         

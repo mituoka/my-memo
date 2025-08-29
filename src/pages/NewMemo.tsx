@@ -51,8 +51,10 @@ function NewMemo() {
     if (!validateForm()) {
       // Add shake animation to form on validation error
       const form = e.currentTarget as HTMLFormElement;
-      form.classList.add('shake');
-      setTimeout(() => form.classList.remove('shake'), 500);
+      if (form && form.classList) {
+        form.classList.add('shake');
+        setTimeout(() => form.classList.remove('shake'), 500);
+      }
       return;
     }
 
@@ -71,7 +73,9 @@ function NewMemo() {
       
       // Success animation before navigation
       const form = e.currentTarget as HTMLFormElement;
-      form.classList.add('bounce-in');
+      if (form && form.classList) {
+        form.classList.add('bounce-in');
+      }
       
       setTimeout(() => {
         navigate('/', { replace: true });
