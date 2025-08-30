@@ -71,19 +71,7 @@ export const MemoGrid: React.FC<MemoGridProps> = ({
   }
 
   return (
-    <div className={`view-${viewSettings.mode}`}>
-      <div 
-        className={`memo-grid layout-${cardLayoutSettings.layout}`}
-        style={{
-          display: 'grid',
-          gap: '1rem',
-          gridTemplateColumns: cardLayoutSettings.layout === 'minimal' 
-            ? 'repeat(auto-fill, minmax(300px, 1fr))' 
-            : cardLayoutSettings.layout === 'detailed' 
-            ? 'repeat(auto-fill, minmax(400px, 1fr))' 
-            : '1fr'
-        }}
-      >
+    <div className={`view-${viewSettings.mode} layout-${cardLayoutSettings.layout}`}>
         {memos.map((memo, index) => (
           <div
             key={memo.id}
@@ -351,7 +339,6 @@ export const MemoGrid: React.FC<MemoGridProps> = ({
             </div>
           </div>
         ))}
-      </div>
     </div>
   );
 };
