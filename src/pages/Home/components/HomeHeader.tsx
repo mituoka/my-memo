@@ -86,32 +86,30 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
           </p>
         </div>
         
-        {memosCount === 0 && (
-          <Link 
-            to="/memo/new" 
-            className="btn btn-primary" 
-            style={{ 
-              fontSize: '1rem', 
-              padding: '0.75rem 1.5rem',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}
+        <Link 
+          to="/memo/new" 
+          className="btn btn-primary" 
+          style={{ 
+            fontSize: '0.875rem', 
+            padding: memosCount === 0 ? '0.75rem 1.5rem' : '0.5rem 1rem',
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}
+        >
+          <svg 
+            width="16" 
+            height="16" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+            strokeWidth="2"
           >
-            <svg 
-              width="16" 
-              height="16" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            最初のメモを作成
-          </Link>
-        )}
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          {memosCount === 0 ? '最初のメモを作成' : '新規作成'}
+        </Link>
       </div>
       
       {/* 検索・ソート・ビュー設定 */}
