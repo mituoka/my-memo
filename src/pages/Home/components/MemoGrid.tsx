@@ -176,69 +176,62 @@ export const MemoGrid: React.FC<MemoGridProps> = ({
             {/* 画像プレビュー */}
             {memo.images && memo.images.length > 0 && (
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: memo.images.length === 1 
-                  ? '1fr' 
-                  : memo.images.length === 2 
-                  ? 'repeat(2, 1fr)'
-                  : 'repeat(3, 1fr)',
-                gap: '0.5rem',
                 marginBottom: '1rem',
-                maxHeight: memo.images.length === 1 ? '120px' : '80px'
+                position: 'relative'
               }}>
-                {memo.images.slice(0, 3).map((image, imageIndex) => (
-                  <div
-                    key={imageIndex}
+                <div
+                  style={{
+                    width: '100%',
+                    height: '120px',
+                    borderRadius: '6px',
+                    overflow: 'hidden',
+                    border: '1px solid var(--border)',
+                    position: 'relative',
+                    backgroundColor: 'var(--background)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.boxShadow = 'var(--shadow)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <img
+                    src={memo.images[0]}
+                    alt={`${memo.title} - 画像`}
                     style={{
                       width: '100%',
-                      height: memo.images!.length === 1 ? '120px' : '80px',
-                      borderRadius: '6px',
-                      overflow: 'hidden',
-                      border: '1px solid var(--border)',
-                      position: 'relative',
-                      backgroundColor: 'var(--background)',
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                      height: '100%',
+                      objectFit: 'cover'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.02)';
-                      e.currentTarget.style.boxShadow = 'var(--shadow)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <img
-                      src={image}
-                      alt={`${memo.title} - 画像 ${imageIndex + 1}`}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover'
-                      }}
-                      loading="lazy"
-                    />
-                    {memo.images!.length > 3 && imageIndex === 2 && (
-                      <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '0.875rem',
-                        fontWeight: '600'
-                      }}>
-                        +{memo.images!.length - 2}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                    loading="lazy"
+                  />
+                  {memo.images.length > 1 && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '0.5rem',
+                      right: '0.5rem',
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                      </svg>
+                      {memo.images.length}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
